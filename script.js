@@ -1,45 +1,50 @@
-// ในไฟล์ script.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    // องค์ประกอบ Input และ Button
-    const trackingIdInput = document.getElementById('trackingIdInput'); 
-    const checkButton = document.getElementById('checkButton'); 
-    
-    // องค์ประกอบแสดงผลลัพธ์
+    const trackingIdInput = document.getElementById('trackingIdInput');
+    const checkButton = document.getElementById('checkButton');
     const resultContainer = document.getElementById('resultContainer');
     const productImage = document.getElementById('productImage');
-    const statusOutput = document.getElementById('statusOutput'); // ตอนนี้เราจะใส่ HTML ลงไปแทนข้อความธรรมดา
+    const noImagePlaceholder = document.getElementById('noImagePlaceholder');
+    const statusOutput = document.getElementById('statusOutput');
     const errorOutput = document.getElementById('errorOutput');
 
     if (checkButton) {
         checkButton.addEventListener('click', checkStatus);
     }
 
+    // กด Enter เพื่อค้นหาได้ด้วย
+    trackingIdInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkStatus();
+        }
+    });
+
     async function checkStatus() {
         const trackingId = trackingIdInput.value.trim();
 
-        // เคลียร์ผลลัพธ์เดิม
-        statusOutput.innerHTML = ''; // เปลี่ยนจาก innerText เป็น innerHTML
-        errorOutput.innerText = '';
+        // Reset UI
+        statusOutput.innerHTML = '';
+        errorOutput.style.display = 'none';
+        resultContainer.style.display = 'none';
+        
+        // Reset Image
         productImage.src = '';
         productImage.style.display = 'none';
-        resultContainer.style.display = 'none';
+        noImagePlaceholder.style.display = 'none';
 
         if (!trackingId) {
-            errorOutput.innerText = 'กรุณากรอกรหัสติดตาม';
-            errorOutput.style.display = 'block';
+            showError('กรุณาระบุหมายเลขพัสดุ');
             return;
         }
-        
-        errorOutput.style.display = 'none';
-        errorOutput.innerText = '';
+
+        // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
+        const originalBtnText = checkButton.innerHTML;
+        checkButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
+        checkButton.disabled = true;
 
         try {
             const response = await fetch('/api/status', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ trackingId: trackingId })
             });
 
@@ -48,46 +53,53 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'success') {
                 const result = data.data;
                 
-                // 1. จัดการรูปภาพ (อยู่ด้านบนข้อความ)
+                // 1. จัดการรูปภาพ
                 if (result.imageUrl && result.imageUrl.startsWith('http')) {
                     productImage.src = result.imageUrl;
                     productImage.style.display = 'block';
                 } else {
-                    productImage.style.display = 'none';
+                    noImagePlaceholder.style.display = 'flex';
                 }
                 
-                // 2. สร้าง HTML สำหรับแสดงผลลัพธ์แบบตาราง/รายการ
+                // 2. สร้าง HTML ตารางข้อมูล (Label ซ้าย - Value ขวา)
                 const outputHTML = `
-                    <div class="result-row">
-                        <span class="label">สถานะ:</span>
-                        <span class="value status-value"><b>${result.status}</b></span>
+                    <div class="info-row">
+                        <div class="info-label">สถานะปัจจุบัน</div>
+                        <div class="info-value status-highlight">${result.status}</div>
                     </div>
-                    <div class="result-row">
-                        <span class="label">รหัสติดตาม:</span>
-                        <span class="value">${result.trackingId}</span>
+                    <div class="info-row">
+                        <div class="info-label">หมายเลขพัสดุ</div>
+                        <div class="info-value">${result.trackingId}</div>
                     </div>
-                    <div class="result-row">
-                        <span class="label">สินค้า:</span>
-                        <span class="value">${result.productName}</span>
+                    <div class="info-row">
+                        <div class="info-label">รายการสินค้า</div>
+                        <div class="info-value">${result.productName}</div>
                     </div>
-                    <div class="result-row">
-                        <span class="label">ราคา:</span>
-                        <span class="value">${result.price}</span>
+                    <div class="info-row">
+                        <div class="info-label">ยอดชำระ</div>
+                        <div class="info-value">${result.price} บาท</div>
                     </div>
                 `;
                 
-                statusOutput.innerHTML = outputHTML; // ใส่ HTML ที่สร้างขึ้น
+                statusOutput.innerHTML = outputHTML;
                 resultContainer.style.display = 'block';
 
             } else {
-                errorOutput.innerText = `🚨 ${data.message}`;
-                errorOutput.style.display = 'block';
+                showError(`ไม่พบข้อมูล: ${data.message}`);
             }
 
         } catch (error) {
             console.error('Fetch Error:', error);
-            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว';
-            errorOutput.style.display = 'block';
+            showError('เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบ');
+        } finally {
+            // คืนค่าปุ่มกลับสู่ปกติ
+            checkButton.innerHTML = originalBtnText;
+            checkButton.disabled = false;
         }
+    }
+
+    function showError(msg) {
+        errorOutput.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+        errorOutput.style.display = 'block';
     }
 });
