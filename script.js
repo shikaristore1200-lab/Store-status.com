@@ -96,3 +96,16 @@ function displayStatus(data, searchName, resultDiv) {
                 <p><strong>ชื่อสินค้า:</strong> ${productName}</p>
             </div>
         </div>
+
+        <div class="financial-details">
+            <p><strong><i class="fas fa-tag"></i> ราคาสินค้า:</strong> ${price} บาท</p>
+            <p class="remaining"><strong><i class="fas fa-money-bill-wave"></i> ค้างชำระ:</strong> <span style="color: ${remaining > 0 ? '#dc3545' : '#28a745'};">${remaining} บาท</span></p>
+        </div>
+    `;
+}
+
+// ไม่ต้องมี findStatus เพราะการค้นหาทำใน Serverless Function แล้ว
+                <p><strong>ชื่อบัญชี:</strong> ${accountName}</p>
+                <p><strong>ชื่อสินค้า:</strong> ${productName}</p>
+            </div>
+        </div>
