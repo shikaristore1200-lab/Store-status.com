@@ -11,7 +11,7 @@ const DATA_RANGE = 'A:G'; // ดึงข้อมูลถึงคอลัม
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 
 module.exports = async (req, res) => {
-    // กำหนด CORS Header สำหรับให้เว็บไซต์อื่นเรียกใช้ได้
+    // กำหนด CORS Header
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
