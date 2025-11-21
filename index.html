@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตรวจสอบสถานะสินค้า</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบสถานะสินค้า</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <i class="fas fa-shipping-fast"></i> 🚚 ตรวจสอบสถานะ
-        </div>
-        <p class="instruction">กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะของคุณ</p>
-        <div class="input-group">
-            <div id="errorOutput" style="color: red; margin-top: 15px;"></div>
-<div id="resultContainer" style="margin-top: 20px;">
-    <img id="productImage" src="" alt="รูปภาพสินค้า" style="max-width: 100%; height: auto; display: none; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"> 
-    
-    <pre id="statusOutput" class="output-box" style="white-space: pre-wrap; font-family: inherit;"></pre>
-</div>
-            <input type="text" id="trackingId" placeholder="รหัสติดตาม: เช่น @cat">
-            <button id="checkStatus">
-                <i class="fas fa-search"></i> ตรวจสอบ
-            </button>
-        </div>
-        <div id="resultBox" class="result-box hidden">
-            </div>
-    </div>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="script.js"></script>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-shipping-fast"></i> 🚚 ตรวจสอบสถานะ
+        </div>
+        <p class="instruction">กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะของคุณ</p>
+        
+                <div class="input-group">
+            <input type="text" id="trackingIdInput" placeholder="รหัสติดตาม: เช่น @cat">             <button id="checkButton">                 <i class="fas fa-search"></i> ตรวจสอบ
+            </button>
+        </div>
+
+                <div id="errorOutput" style="color: red; margin-top: 15px;"></div>
+
+        <div id="resultContainer" style="margin-top: 20px; display: none;">             <img id="productImage" src="" alt="รูปภาพสินค้า" style="max-width: 100%; height: auto; display: none; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"> 
+            <pre id="statusOutput" class="output-box" style="white-space: pre-wrap; font-family: inherit;"></pre>
+        </div>
+    </div>
+
+        <script src="script.js"></script>
 </body>
 </html>
