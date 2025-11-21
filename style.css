@@ -187,13 +187,13 @@ body {
 }
 
 .info-label {
-    font-weight: 500;
+    font-weight: 600;
     color: #495057;
     width: 35%; 
 }
 
 .info-value {
-    flex: 1;
+    flex: 0;
 }
 
 .status-highlight {
@@ -214,6 +214,6 @@ body {
     }
     
     .info-label {
-        width: 40%;
+        width: 80%;
     }
 }
