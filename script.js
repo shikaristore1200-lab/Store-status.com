@@ -1,10 +1,11 @@
 // ในไฟล์ script.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    const trackingIdInput = document.getElementById('trackingIdInput'); // สมมติว่านี่คือ ID ของช่อง input
-    const checkButton = document.getElementById('checkButton'); // สมมติว่านี่คือ ID ของปุ่มตรวจสอบ
+    // *** แก้ไข ID ให้ตรงกับ index.html ***
+    const trackingIdInput = document.getElementById('trackingIdInput'); 
+    const checkButton = document.getElementById('checkButton'); 
     
-    // Element ใหม่ที่เราเพิ่มใน index.html
+    // Element สำหรับแสดงผลลัพธ์
     const resultContainer = document.getElementById('resultContainer');
     const productImage = document.getElementById('productImage');
     const statusOutput = document.getElementById('statusOutput');
@@ -22,13 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
         errorOutput.innerText = '';
         productImage.src = '';
         productImage.style.display = 'none';
-        resultContainer.style.display = 'none';
+        resultContainer.style.display = 'none'; // ซ่อนกล่องผลลัพธ์ทั้งหมด
 
         if (!trackingId) {
             errorOutput.innerText = 'กรุณากรอกรหัสติดตาม';
             errorOutput.style.display = 'block';
             return;
         }
+        
+        // ซ่อน Error ขณะกำลังค้นหา
+        errorOutput.style.display = 'none';
+        errorOutput.innerText = '';
 
         try {
             const response = await fetch('/api/status', {
@@ -43,8 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.status === 'success') {
                 const result = data.data;
-                errorOutput.style.display = 'none';
-
+                
                 // 1. จัดรูปแบบข้อความสถานะ
                 const outputText = `
 **สถานะ:** ${result.status}
@@ -54,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 
                 statusOutput.innerText = outputText;
-                resultContainer.style.display = 'block';
+                resultContainer.style.display = 'block'; // แสดงกล่องผลลัพธ์
 
                 // 2. จัดการรูปภาพ
                 // ตรวจสอบว่ามี URL ที่ถูกต้องหรือไม่ (ต้องขึ้นต้นด้วย http)
@@ -73,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Fetch Error:', error);
-            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว';
+            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว'; // ข้อความเดิม
             errorOutput.style.display = 'block';
         }
     }
