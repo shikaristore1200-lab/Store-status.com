@@ -1,117 +1,180 @@
+/* style.css */
+
+/* รีเซ็ตค่าเริ่มต้นของเบราว์เซอร์ */
+body, h1, h2, h3, p, div, input, button, pre {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* กำหนดฟอนต์และพื้นหลังทั่วโลก */
 body {
     font-family: 'Sarabun', sans-serif;
-    background: linear-gradient(135deg, #f0f4f8 0%, #c8d3e6 100%);
+    background-color: #f0f2f5; /* สีพื้นหลังอ่อนๆ */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
     padding: 20px;
+    color: #333;
+    line-height: 1.6;
 }
 
+/* Container หลักของเนื้อหาทั้งหมด */
 .container {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
     width: 100%;
-    max-width: 450px;
     text-align: center;
+    position: relative;
+    overflow: hidden; /* เพื่อให้มุมโค้งดูเรียบร้อย */
 }
 
+/* Header ส่วนบนสุด */
 .header {
-    font-size: 28px;
+    font-size: 2.2em; /* ขนาดใหญ่ขึ้น */
     font-weight: 700;
-    color: #1e3a8a; /* สีน้ำเงินเข้ม */
-    margin-bottom: 10px;
-}
-
-.instruction {
-    color: #6b7280;
+    color: #4CAF50; /* สีเขียวสดใส */
     margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
 }
 
+.header i {
+    color: #2196F3; /* สีฟ้าสำหรับไอคอนรถบรรทุก */
+    font-size: 1.2em; /* ขนาดไอคอนใหญ่ขึ้นเล็กน้อย */
+}
+
+/* ข้อความแนะนำ */
+.instruction {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* กลุ่ม Input และ Button */
 .input-group {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap; /* ให้ input และ button ขึ้นบรรทัดใหม่ได้ถ้าหน้าจอเล็ก */
+    gap: 10px; /* ระยะห่างระหว่าง input และ button */
     margin-bottom: 20px;
+    justify-content: center; /* จัดกึ่งกลางใน input-group */
+    align-items: center;
 }
 
-#trackingId {
-    flex-grow: 1;
+#trackingIdInput {
+    flex-grow: 1; /* ให้ input ขยายเต็มพื้นที่ */
     padding: 12px 15px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-#trackingId:focus {
-    border-color: #3b82f6;
+    font-size: 1.1em;
     outline: none;
+    transition: border-color 0.3s ease;
+    max-width: 300px; /* จำกัดความกว้างสูงสุด */
 }
 
-#checkStatus {
-    padding: 12px 20px;
-    background-color: #10b981; /* สีเขียว */
+#trackingIdInput:focus {
+    border-color: #2196F3; /* สีฟ้าเมื่อโฟกัส */
+}
+
+#checkButton {
+    background-color: #4CAF50; /* สีเขียว */
     color: white;
+    padding: 12px 25px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 1.1em;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-#checkStatus:hover {
-    background-color: #059669;
+#checkButton:hover {
+    background-color: #43A047; /* สีเขียวเข้มขึ้นเมื่อ hover */
+    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
 }
 
-#checkStatus:active {
-    transform: scale(0.98);
+#checkButton:active {
+    transform: translateY(0); /* กลับลงมาเมื่อคลิก */
 }
 
-/* Result Box */
-.result-box {
-    text-align: left;
-    padding: 15px;
+#checkButton i {
+    font-size: 1.1em;
+}
+
+/* กล่องแสดงข้อผิดพลาด */
+#errorOutput {
+    color: #D32F2F; /* สีแดงเข้ม */
+    background-color: #FFEBEE; /* พื้นหลังสีแดงอ่อน */
+    border: 1px solid #EF9A9A;
+    padding: 10px;
     border-radius: 8px;
-    min-height: 100px; /* เพื่อให้มีพื้นที่แสดงผล */
-    word-wrap: break-word; /* ป้องกันข้อความยาวเกิน */
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    margin-top: 15px;
+    display: none; /* ซ่อนไว้ก่อน */
+    text-align: center;
+    font-size: 0.95em;
+    font-weight: 500;
 }
 
-.result-box.hidden {
-    display: none;
+/* กล่องผลลัพธ์ทั้งหมด */
+#resultContainer {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08); /* เงาด้านใน */
+    margin-top: 25px;
+    display: none; /* ซ่อนไว้ก่อน */
+    text-align: left; /* จัดข้อความผลลัพธ์ไปทางซ้าย */
 }
 
-.status-item {
-    padding: 8px 0;
-    border-bottom: 1px dashed #e5e7eb;
+/* รูปภาพสินค้า */
+#productImage {
+    max-width: 100%;
+    height: auto;
+    display: block; /* ทำให้รูปภาพอยู่บรรทัดใหม่และจัดกึ่งกลางได้ */
+    margin: 0 auto 20px auto; /* จัดกึ่งกลางรูปภาพและมีระยะห่างด้านล่าง */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* เงารูปภาพ */
+    border: 1px solid #eee; /* ขอบบางๆ */
 }
 
-.status-item:last-child {
-    border-bottom: none;
+/* กล่องแสดงสถานะ (pre) */
+#statusOutput {
+    font-size: 1.1em;
+    color: #333;
+    padding: 10px 0;
+    margin: 0;
+    white-space: pre-wrap; /* รักษารูปแบบขึ้นบรรทัดใหม่ */
 }
 
-.status-label {
-    font-weight: 700;
-    color: #1f2937;
-    display: inline-block;
-    width: 120px; /* จัดให้ label ตรงกัน */
+#statusOutput strong {
+    color: #2196F3; /* สีฟ้าสำหรับสถานะสำคัญ */
 }
 
-.status-value {
-    color: #4b5563;
-}
-
-.status-value.success {
-    color: #10b981;
-    font-weight: 700;
-}
-
-.status-value.error {
-    color: #ef4444;
-    font-weight: 700;
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .container {
+        padding: 25px;
+    }
+    .header {
+        font-size: 1.8em;
+    }
+    .instruction {
+        font-size: 1em;
+    }
+    .input-group {
+        flex-direction: column; /* วาง input และ button ซ้อนกันในหน้าจอเล็ก */
+        align-items: stretch;
+    }
+    #trackingIdInput {
+        max-width: 100%;
+    }
 }
