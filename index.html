@@ -1,27 +1,49 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ ระบบเช็คสถานะสินค้า/เอกสาร ✨</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// ... (ส่วนการกำหนด YOUR_SHEET_ID, YOUR_GID และฟังก์ชัน checkStatus ยังคงเดิม) ...
 
-    <div class="container">
-        <h1><i class="fas fa-shipping-fast"></i> ตรวจสอบสถานะ</h1> <p class="subtitle">กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะของคุณ</p>
+// ฟังก์ชันสำหรับค้นหาข้อมูลในตาราง (มีการข้าม Index 2)
+function findStatus(rows, searchAccountName) {
+    const normalizedSearchName = searchAccountName.toUpperCase(); 
+    
+    // ดัชนีใหม่ตามโครงสร้าง Sheet ที่เว้น C ไว้
+    const ACCOUNT_NAME_INDEX = 0; // A
+    const IMAGE_URL_INDEX = 1;    // B
+    // Index 2 ถูกข้ามไป (คอลัมน์ C)
+    const PRODUCT_NAME_INDEX = 3; // D <--- เริ่มดึงข้อมูลถัดไปที่นี่
+    const PRICE_INDEX = 4;        // E
+    const REMAINING_INDEX = 5;    // F
+    const STATUS_INDEX = 6;       // G
 
-        <div class="input-group">
-            <label for="statusId">รหัสติดตาม:</label>
-            <input type="text" id="statusId" placeholder="เช่น P-101 หรือ ABC-12345">
-            <button onclick="checkStatus()"><i class="fas fa-search"></i> ตรวจสอบ</button> </div>
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i].c;
+        
+        // ค้นหาจากคอลัมน์ A (index 0) 'ชื่อบัญชี'
+        const accountNameFromSheet = row[ACCOUNT_NAME_INDEX]?.v ? String(row[ACCOUNT_NAME_INDEX].v).toUpperCase() : '';
+        
+        if (accountNameFromSheet === normalizedSearchName) {
+            
+            // ดึงข้อมูลตาม Index ใหม่
+            const accountName = row[ACCOUNT_NAME_INDEX]?.v || '-';
+            const imageUrl = row[IMAGE_URL_INDEX]?.v || '';
+            
+            // ใช้ Index 3 สำหรับ ชื่อสินค้า (ข้าม C)
+            const productName = row[PRODUCT_NAME_INDEX]?.v || '-'; 
+            
+            const price = row[PRICE_INDEX]?.v || '0';
+            const remaining = row[REMAINING_INDEX]?.v || '0';
+            const status = row[STATUS_INDEX]?.v || 'ไม่ระบุสถานะ'; 
+            
+            return {
+                accountName: accountName,
+                imageUrl: imageUrl,
+                productName: productName,
+                price: price,
+                remaining: remaining,
+                status: status
+            };
+        }
+    }
+    return null; // ไม่พบชื่อบัญชี
+}
 
-        <div id="result">
-            </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+// ฟังก์ชัน displayStatus **ไม่ต้องแก้ไข**
+// เพราะมันยังคงใช้ชื่อตัวแปรเดิม (accountName, productName, price, ฯลฯ)
