@@ -1,36 +1,24 @@
 const { GoogleAuth } = require('google-auth-library');
 const { google } = require('googleapis');
 
-// รหัส Google Sheet ของคุณ (ที่ถูกต้องแล้ว)
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
-// ชื่อชีตและช่วงข้อมูลที่ต้องการอ่าน (ต้องเป็น 'ตาราง3' ตามภาพ)
-const SHEET_NAME_RANGE = 'ตาราง3!A:G'; 
+// *** เปลี่ยนมาใช้ชีตสรุปใหม่ที่คุณสร้างขึ้นมาเท่านั้น ***
+// คุณสามารถตั้งชื่อชีตนี้ว่า 'Summary' หรือ 'รวมข้อมูล' ก็ได้
+const SUMMARY_SHEET_NAME = 'Summary'; // <-- เปลี่ยนเป็นชื่อชีตสรุปของคุณ
+const DATA_RANGE = 'A:I'; // ดึงข้อมูลทุกคอลัมน์ที่จำเป็น
+
+const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
+// โค้ดจะดึงข้อมูลจากชีต Summary เท่านั้น
 
 module.exports = async (req, res) => {
-    // กำหนดค่า Header สำหรับ CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    // จัดการ OPTIONS request สำหรับ CORS
-    if (req.method === 'OPTIONS') {
-        return res.status(200).send();
-    }
-
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    // ... (ส่วนการตั้งค่า Header และการรับค่า trackingId เหมือนเดิม) ...
+    // ... (ส่วนการสร้าง GoogleAuth และ sheets object เหมือนเดิม) ...
 
     const { trackingId } = req.body;
-
-    if (!trackingId) {
-        return res.status(400).json({ error: 'Tracking ID is required.' });
-    }
+    // ... (ส่วนตรวจสอบ trackingId) ...
 
     try {
-        // 1. สร้าง GoogleAuth Object จาก Environment Variables
-        // **สำคัญ: โค้ดถูกแก้ไขเพื่อใช้ Private Key แบบ Newline จริง ๆ**
         const privateKey = process.env.GOOGLE_PRIVATE_KEY; 
         
         const auth = new GoogleAuth({
@@ -43,47 +31,43 @@ module.exports = async (req, res) => {
 
         const sheets = google.sheets({ version: 'v4', auth });
 
-        // 2. อ่านข้อมูลจาก Google Sheet
+        // 1. อ่านข้อมูลจากชีต Summary ทั้งหมด
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: SHEET_NAME_RANGE,
+            range: SHEET_NAME_RANGE, // ดึงจากชีต Summary เท่านั้น
         });
 
         const rows = response.data.values;
-        if (!rows || rows.length === 0) {
-            return res.status(404).json({ status: 'Sheet Empty', message: 'ไม่พบข้อมูลในตาราง.' });
+        if (!rows || rows.length <= 1) {
+            return res.status(404).json({ status: 'Sheet Empty', message: 'ไม่พบข้อมูลในตารางสรุป.' });
         }
 
-        // 3. ค้นหาสถานะ
-        // แถวแรกคือ Header (ชื่อบัญชี, รูปสินค้า, ชื่อสินค้า, ฯลฯ)
-        const header = rows[0]; 
+        // 2. ค้นหาสถานะในข้อมูลที่ดึงมา
         const dataRows = rows.slice(1);
-        
-        const trackingColIndex = 0; // คอลัมน์ A (index 0) คือ 'ชื่อบัญชี' (รหัสติดตาม)
-        const statusColIndex = 6;  // คอลัมน์ G (index 6) คือ 'สถานะ'
+        const trackingColIndex = 0; // Col1 = Index 0
+        const statusColIndex = 6;  // Col7 (G) = Index 6
 
         let statusFound = false;
         let result = {};
 
         for (const row of dataRows) {
             if (row[trackingColIndex] === trackingId) {
-                // สถานะที่อยู่ในคอลัมน์ G
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
-                // ดึงข้อมูลทั้งหมดของแถวนั้นมาตอบกลับ
                 result = {
                     trackingId: row[trackingColIndex],
-                    productName: row[3], // D: ชื่อสินค้า
-                    price: row[4],       // E: ราคาสินค้า
-                    status: status,      // G: สถานะ
-                    allData: row         // ข้อมูลแถวทั้งหมด
+                    productName: row[3], // Col4
+                    price: row[4],       // Col5
+                    status: status,      // Col7
+                    allData: row         
                 };
 
                 statusFound = true;
                 break;
             }
         }
-
+        
+        // 3. ตอบกลับ
         if (statusFound) {
             return res.status(200).json({ status: 'success', data: result });
         } else {
@@ -92,7 +76,6 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('Google Sheet Connection Error:', error);
-        // แสดงข้อผิดพลาด 500
         return res.status(500).json({ error: 'การเชื่อมต่อ Google Sheet ล้มเหลว' });
     }
 };
