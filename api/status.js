@@ -1,17 +1,19 @@
 const { GoogleAuth } = require('google-auth-library');
 const { google } = require('googleapis');
 
+// *** กรุณาใส่ ID ของ Google Sheet ของคุณที่นี่ ***
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
-// *** แก้ไขช่วงข้อมูลเป็น A:G ***
-const SUMMARY_SHEET_NAME = 'Summary'; // <-- ต้องตรงกับชื่อชีตสรุปที่คุณใส่สูตร
-const DATA_RANGE = 'A:G'; // *** เปลี่ยนจาก A:I เป็น A:G ***
+// *** โค้ดจะดึงข้อมูลจากชีต Summary ที่มีสูตร QUERY อยู่เท่านั้น ***
+const SUMMARY_SHEET_NAME = 'Summary'; 
+const DATA_RANGE = 'A:G'; // ดึงข้อมูลถึงคอลัมน์ G เท่านั้น
 
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 
 module.exports = async (req, res) => {
+    // กำหนด CORS Header สำหรับให้เว็บไซต์อื่นเรียกใช้ได้
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') return res.status(200).send();
@@ -39,7 +41,7 @@ module.exports = async (req, res) => {
         // 1. อ่านข้อมูลจากชีต Summary ทั้งหมด
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: SHEET_NAME_RANGE, // ดึงจากชีต Summary เท่านั้น
+            range: SHEET_NAME_RANGE, // ดึงจากชีต Summary!A:G เท่านั้น
         });
 
         const rows = response.data.values;
@@ -48,10 +50,10 @@ module.exports = async (req, res) => {
         }
 
         // 2. ค้นหาสถานะในข้อมูลที่ดึงมา
-        // *เราสมมติว่า Col1 (A) = รหัสติดตาม และ Col7 (G) = สถานะ*
         const dataRows = rows.slice(1);
-        const trackingColIndex = 0; // Col1 = Index 0
-        const statusColIndex = 6;  // Col7 (G) = Index 6 
+        const trackingColIndex = 0; // Col1 (A)
+        const imageUrlIndex = 1;    // Col2 (B) - สำหรับ URL รูปภาพ
+        const statusColIndex = 6;   // Col7 (G)
 
         let statusFound = false;
         let result = {};
@@ -62,10 +64,11 @@ module.exports = async (req, res) => {
 
                 result = {
                     trackingId: row[trackingColIndex],
-                    productName: row[3], // Col4 (D)
-                    price: row[4],       // Col5 (E)
-                    status: status,      // Col7 (G)
-                    allData: row         
+                    imageUrl: row[imageUrlIndex] || '', // ดึง URL รูปภาพจาก Col B (Index 1)
+                    productName: row[3] || 'ไม่ระบุ', // Col4 (D)
+                    price: row[4] || 'ไม่ระบุ',       // Col5 (E)
+                    status: status,                  // Col7 (G)
+                    allData: row                     
                 };
 
                 statusFound = true;
@@ -73,7 +76,7 @@ module.exports = async (req, res) => {
             }
         }
         
-        // 3. ตอบกลับ
+        // 3. ตอบกลับผลลัพธ์
         if (statusFound) {
             return res.status(200).json({ status: 'success', data: result });
         } else {
