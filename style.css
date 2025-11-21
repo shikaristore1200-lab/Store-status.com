@@ -1,7 +1,7 @@
-/* style.css (ปรับปรุงใหม่ตามตัวอย่าง) */
+/* style.css (ปรับปรุงสำหรับการแสดงผลลัพธ์แบบตาราง) */
 
 /* รีเซ็ตค่าเริ่มต้น */
-body, h1, h2, h3, p, div, input, button, pre {
+body, h1, h2, h3, p, div, input, button, pre, span {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -16,26 +16,26 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-    color: #333;
+    color: #343a40; /* สีข้อความเข้มขึ้น */
     line-height: 1.6;
 }
 
 /* Container หลักของเนื้อหาทั้งหมด */
 .container {
     background-color: #ffffff;
-    padding: 40px 30px; /* ปรับ Padding */
-    border-radius: 16px; /* ขอบโค้งที่โดดเด่น */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* เงาที่ชัดเจนขึ้น */
-    max-width: 450px; /* จำกัดความกว้างให้แคบลงเล็กน้อย */
+    padding: 40px 30px;
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+    max-width: 450px;
     width: 100%;
     text-align: center;
 }
 
 /* Header ส่วนบนสุด */
 .header {
-    font-size: 1.8em; /* ขนาดเหมาะสม */
+    font-size: 1.8em; 
     font-weight: 700;
-    color: #007bff; /* สีฟ้าที่ใช้บ่อยในภาพตัวอย่าง */
+    color: #007bff;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -44,7 +44,7 @@ body {
 }
 
 .header i {
-    color: #28a745; /* สีเขียวสำหรับไอคอน */
+    color: #28a745;
     font-size: 1.1em;
 }
 
@@ -66,7 +66,7 @@ body {
 #trackingIdInput {
     flex-grow: 1;
     padding: 10px 15px;
-    border: 1px solid #ced4da; /* ขอบบางๆ */
+    border: 1px solid #ced4da;
     border-radius: 8px;
     font-size: 1em;
     outline: none;
@@ -78,7 +78,7 @@ body {
 }
 
 #checkButton {
-    background-color: #28a745; /* สีเขียวสดใส */
+    background-color: #28a745;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -98,48 +98,74 @@ body {
 
 /* กล่องแสดงข้อผิดพลาด */
 #errorOutput {
-    color: #dc3545; /* สีแดง */
+    color: #dc3545;
     font-weight: 500;
     margin-bottom: 15px;
     text-align: center;
     padding: 5px;
 }
 
-/* กล่องผลลัพธ์ทั้งหมด */
+/* กล่องผลลัพธ์ทั้งหมด (คล้ายกับภาพตัวอย่าง) */
 #resultContainer {
-    background-color: #f8f9fa; /* พื้นหลังสีเทาอ่อนมาก */
+    background-color: #e6ffe6; /* พื้นหลังสีเขียวอ่อนมาก */
     padding: 20px;
     border-radius: 10px;
-    border: 1px solid #e9ecef; /* ขอบอ่อนๆ */
+    border: 1px solid #c3e6cb; /* ขอบสีเขียวอ่อน */
     margin-top: 25px;
-    text-align: center; /* จัดกึ่งกลางรูปภาพและข้อความ */
+    text-align: center; 
 }
 
 /* รูปภาพสินค้า */
 #productImage {
-    /* ปรับขนาดให้ไม่ใหญ่เกินไปตามที่คุณต้องการ */
     max-width: 250px; 
     max-height: 250px; 
     height: auto;
     display: block; 
-    margin: 0 auto 20px auto; /* จัดกึ่งกลางและมีระยะห่างด้านล่าง */
+    margin: 0 auto 20px auto; 
     border-radius: 6px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     object-fit: contain; 
 }
 
-/* กล่องแสดงสถานะ (pre) */
+/* ------------------------------------- */
+/* สไตล์สำหรับการแสดงผลลัพธ์แบบตาราง (Excel-like) */
+/* ------------------------------------- */
+
 #statusOutput {
-    font-size: 1em;
-    color: #343a40;
-    padding: 10px 0;
-    margin: 0;
-    text-align: center; /* จัดกึ่งกลางข้อความผลลัพธ์ */
-    white-space: pre-wrap; 
+    padding: 10px;
+    text-align: left; /* จัดข้อความไปทางซ้าย */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-#statusOutput strong {
-    color: #28a745; /* สีเขียวสำหรับสถานะสำคัญ */
+.result-row {
+    display: flex;
+    justify-content: space-between; /* แยก Label และ Value ไปคนละด้าน */
+    padding: 6px 0;
+    border-bottom: 1px dashed #f0f0f0; /* เส้นประแบ่งบรรทัด */
+    font-size: 1em;
+}
+
+.result-row:last-child {
+    border-bottom: none; /* บรรทัดสุดท้ายไม่มีเส้นแบ่ง */
+}
+
+.label {
+    font-weight: 500; /* ตัวหนาปานกลางสำหรับหัวข้อ */
+    color: #555;
+    flex-basis: 40%; /* กำหนดความกว้างประมาณ 40% ให้ Label */
+}
+
+.value {
+    font-weight: 700; /* ตัวหนาสำหรับค่า */
+    color: #333;
+    text-align: right; /* จัดชิดขวาสำหรับค่า */
+    flex-basis: 60%; /* กำหนดความกว้างประมาณ 60% ให้ Value */
+}
+
+.status-value b {
+    color: #007bff; /* สีฟ้าสำหรับสถานะให้เด่นชัด */
 }
 
 /* Responsive adjustments */
