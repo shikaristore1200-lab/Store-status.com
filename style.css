@@ -1,152 +1,146 @@
-/* การตั้งค่าพื้นฐาน */
 body {
-    font-family: 'Sarabun', sans-serif;
-    background-color: #f4f7f6;
-    margin: 0;
-    padding: 0;
+    font-family: 'Saraban', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
     line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
 }
 
-/* Navbar */
-.navbar {
-    background-color: #007bff;
-    color: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.nav-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.brand {
-    font-weight: 700;
-    font-size: 1.2em;
-}
-
-/* Container หลัก */
-.main-wrapper {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 0 15px;
-}
-
-/* กล่องค้นหา */
-.search-card {
-    background-color: white;
+.container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ส่วนหัวข้อหลัก */
+.header {
+    text-align: center;
     margin-bottom: 30px;
-}
-
-.search-card h2 {
     color: #007bff;
-    font-weight: 600;
-    margin-top: 0;
+    font-size: 1.8em;
+    font-weight: 700;
 }
 
-.sub-text {
+.header i {
+    margin-right: 10px;
+}
+
+.instruction {
+    text-align: center;
     color: #6c757d;
     margin-bottom: 20px;
 }
 
-.search-box {
+/* ส่วนฟอร์มค้นหา */
+.input-group {
     display: flex;
     gap: 10px;
+    margin-bottom: 30px;
 }
 
 #trackingIdInput {
     flex-grow: 1;
     padding: 12px 15px;
     border: 1px solid #ced4da;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+#trackingIdInput:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
 #checkButton {
-    background-color: #28a745;
+    background-color: #007bff;
     color: white;
-    border: none;
     padding: 12px 25px;
-    border-radius: 6px;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1em;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
 #checkButton:hover {
-    background-color: #218838;
+    background-color: #0056b3;
+}
+
+#checkButton:active {
+    transform: scale(0.99);
 }
 
 #checkButton:disabled {
-    background-color: #6c757d;
+    background-color: #adb5bd;
     cursor: not-allowed;
 }
 
-/* กล่องแจ้งเตือน/Error */
-.alert-box {
-    padding: 15px;
-    border-radius: 6px;
-    margin-top: 15px;
-    font-weight: 500;
+/* ส่วนแสดงผลลัพธ์ */
+#resultsWrapper {
+    margin-top: 20px;
+    display: none;
 }
 
-.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* ส่วนแสดงผลลัพธ์ (Result Section) */
 .result-section {
-    background-color: white;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    margin-bottom: 20px; /* เว้นระยะห่างระหว่างการ์ดที่แยกกัน */
-    overflow: hidden;
-    animation: fadeIn 0.5s ease-out;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .result-header {
-    background-color: #f1f3f5;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 2px solid #ced4da;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .result-header h3 {
     margin: 0;
-    color: #343a40;
-    font-size: 1.1em;
+    color: #495057;
+    font-size: 1.2em;
+}
+
+.result-header i {
+    margin-right: 8px;
+    color: #007bff;
 }
 
 .result-body {
-    display: flex; 
-    padding: 20px;
-    gap: 20px;
+    display: flex;
+    /* เพิ่มระยะห่างระหว่างรูปภาพกับข้อมูล */
+    gap: 20px; 
+    align-items: flex-start;
 }
 
 /* คอลัมน์รูปภาพ */
 .image-col {
-    flex: 0 0 150px; /* จำกัดความกว้างคอลัมน์รูปภาพ */
+    /* *** ปรับความกว้างคอลัมน์ให้สมดุลกับรูป 150px *** */
+    flex: 0 0 170px; 
+    
     text-align: center;
     display: flex;
     align-items: flex-start; 
     justify-content: center;
 }
 
-.info-col {
-    flex: 1; 
-}
-
 /* รูปภาพสินค้า */
 .product-img-dynamic {
-    width: 150%;
+    width: 100%;
     height: auto;
-    max-height: 200px; /* จำกัดความสูงรูปภาพ */
+    /* *** รูปภาพขนาด 150px *** */
+    max-height: 150px; 
+    
     object-fit: contain; 
     
     border-radius: 6px;
@@ -156,55 +150,94 @@ body {
     box-sizing: border-box;
 }
 
+/* กรณีไม่มีรูปภาพ */
 .no-image {
     width: 100%;
-    height: 150px;
-    background-color: #f8f9fa;
+    /* ความสูงของกล่องไม่มีรูปภาพที่ 150px */
+    height: 150px; 
+    background-color: #e9ecef;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #adb5bd;
     border-radius: 6px;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed #ced4da;
     font-size: 0.9em;
 }
 
-/* ตารางแสดงข้อมูล (ใช้ div) */
+.no-image i {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+/* คอลัมน์ข้อมูล */
+.info-col {
+    flex: 1; /* ใช้พื้นที่ที่เหลือทั้งหมด */
+}
+
 .info-grid {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 .info-row {
     display: flex;
-    padding: 8px 0;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px dashed #e9ecef;
+    padding-bottom: 5px;
 }
 
 .info-row:last-child {
     border-bottom: none;
+    padding-bottom: 0;
 }
 
 .info-label {
-    font-weight: 500;
+    /* *** ปรับความกว้างป้ายชื่อให้สมดุล *** */
+    width: 120px; 
+    font-weight: 600;
     color: #495057;
-    width: 35%; 
+    flex-shrink: 0;
 }
 
 .info-value {
     flex: 1;
+    color: #212529;
 }
 
 .status-highlight {
     font-weight: 700;
-    color: #28a745; /* สีเขียวสำหรับสถานะสำเร็จ */
+    color: #28a745; /* สีเขียวสำหรับสถานะที่ดี */
 }
 
-/* การตอบสนองต่อหน้าจอมือถือ */
+/* ส่วนแสดงข้อผิดพลาด */
+#errorOutput {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+}
+
+/* การปรับรูปแบบสำหรับหน้าจอมือถือ */
 @media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+    
     .result-body {
         flex-direction: column;
+        align-items: center;
         gap: 15px;
     }
 
@@ -212,12 +245,15 @@ body {
         flex: 0 0 auto; 
         max-width: 100%;
     }
-    
+
+    .info-row {
+        flex-direction: row;
+        /* ปรับให้ชิดซ้าย */
+        justify-content: space-between; 
+    }
+
     .info-label {
         width: 40%;
-    }
-}
-    .info-grid td:first-child {
-        width: 40%;
+        margin-right: 10px;
     }
 }
