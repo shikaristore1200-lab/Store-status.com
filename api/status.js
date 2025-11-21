@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
 
     try {
         // 1. สร้าง GoogleAuth Object จาก Environment Variables
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
+        const privateKey = process.env.GOOGLE_PRIVATE_KEY;
         
         const auth = new GoogleAuth({
             credentials: {
