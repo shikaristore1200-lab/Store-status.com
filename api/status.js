@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
             if (row[trackingColIndex] === trackingId) {
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
-                // เก็บข้อมูลลง Array
+                // เก็บข้อมูลลง Array แทนการทับค่าเดิม
                 results.push({
                     trackingId: row[trackingColIndex],
                     imageUrl: row[imageUrlIndex] || '',
