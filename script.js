@@ -1,47 +1,47 @@
-// ฟังก์ชันสำหรับค้นหาข้อมูลในตาราง (ปรับปรุงการเปรียบเทียบให้เข้มงวดขึ้น)
-function findStatus(rows, searchAccountName) {
-    // 1. ทำให้ชื่อที่ใช้ค้นหา "สะอาด" (ตัวพิมพ์ใหญ่, ตัดช่องว่าง)
-    const normalizedSearchName = searchAccountName.trim().toUpperCase(); 
-    
-    // ดัชนีตามโครงสร้าง Sheet ใหม่ (ข้ามคอลัมน์ C ที่ Index 2)
-    const ACCOUNT_NAME_INDEX = 0; 
-    const IMAGE_URL_INDEX = 1;    
-    const PRODUCT_NAME_INDEX = 3; 
-    const PRICE_INDEX = 4;        
-    const REMAINING_INDEX = 5;    
-    const STATUS_INDEX = 6;       
+// ฟังก์ชันสำหรับตรวจสอบ (DEBUGGING MODE)
+async function checkStatus() {
+    const idInput = document.getElementById('statusId');
+    const searchAccountName = idInput.value.trim().toUpperCase(); 
+    const resultDiv = document.getElementById('result');
 
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i].c;
+    resultDiv.innerHTML = '<p style="color: #007bff;">⏳ กำลังดึงข้อมูลดิบจาก Sheet...</p>';
+    
+    // ***************************************************
+    // ** โค้ดสำหรับ DEBUGGING: แสดงผลข้อมูลดิบทั้งหมด **
+    // ***************************************************
+    try {
+        const response = await fetch(SHEET_URL);
+        const text = await response.text();
         
-        // ตรวจสอบว่าคอลัมน์ A (Index 0) มีข้อมูลหรือไม่ก่อนที่จะดึงค่า
-        if (!row[ACCOUNT_NAME_INDEX] || !row[ACCOUNT_NAME_INDEX].v) {
-            continue; // ข้ามแถวที่คอลัมน์ชื่อบัญชีว่างเปล่า
+        // ตัดส่วนที่ไม่ใช่ JSON ออก
+        const jsonText = text.replace(/^google\.visualization\.Query\.setResponse\({/i, '{').replace(/\);$/, '');
+        
+        const dataObject = JSON.parse(jsonText);
+        const rows = dataObject.table.rows;
+        
+        // แปลงข้อมูลแถวแรก ๆ ให้เป็นข้อความที่อ่านได้
+        let debugOutput = '<h3>DEBUG: ข้อมูลดิบจาก Sheet (แถวแรกๆ)</h3>';
+        debugOutput += '<p>ค่าที่ใช้ค้นหา: <strong>' + searchAccountName + '</strong></p>';
+        
+        // แสดงข้อมูลในแถวแรกๆ 3-5 แถว เพื่อดูรูปแบบ
+        for (let i = 0; i < Math.min(rows.length, 5); i++) {
+            const row = rows[i].c;
+            const accountNameValue = row[0]?.v || 'NULL/EMPTY'; // คอลัมน์ A (ชื่อบัญชี)
+            const productNameValue = row[3]?.v || 'NULL/EMPTY'; // คอลัมน์ D (ชื่อสินค้า)
+            
+            debugOutput += `<p>แถว ${i + 1}: [A] = <strong>${accountNameValue}</strong>, [D] = ${productNameValue}</p>`;
         }
         
-        // 2. ทำให้ชื่อบัญชีจาก Sheet "สะอาด"
-        const accountNameFromSheet = String(row[ACCOUNT_NAME_INDEX].v).trim().toUpperCase();
-        
-        // 3. เปรียบเทียบค่าที่ "สะอาด" แล้ว
-        if (accountNameFromSheet === normalizedSearchName) {
-            
-            // ดึงข้อมูลตาม Index ที่กำหนด (Index 0 ถึง 6)
-            const accountName = row[ACCOUNT_NAME_INDEX]?.v || '-';
-            const imageUrl = row[IMAGE_URL_INDEX]?.v || '';
-            const productName = row[PRODUCT_NAME_INDEX]?.v || '-'; 
-            const price = row[PRICE_INDEX]?.v || '0';
-            const remaining = row[REMAINING_INDEX]?.v || '0';
-            const status = row[STATUS_INDEX]?.v || 'ไม่ระบุสถานะ'; 
-            
-            return {
-                accountName: accountName,
-                imageUrl: imageUrl,
-                productName: productName,
-                price: price,
-                remaining: remaining,
-                status: status
-            };
-        }
+        resultDiv.innerHTML = debugOutput;
+        console.log('Raw Sheet Data:', dataObject); // ดูข้อมูลเต็มใน Console (F12)
+
+    } catch (error) {
+        console.error('Fetch/Parse Error:', error);
+        resultDiv.innerHTML = '<p style="color: #dc3545;">🚨 การเชื่อมต่อ Google Sheet ล้มเหลว</p>';
     }
-    return null; // ไม่พบชื่อบัญชี
+    // ***************************************************
+    // ** สิ้นสุดโค้ด DEBUGGING **
+    // ***************************************************
 }
+
+// ... ส่วนที่เหลือของ script.js (findStatus, displayStatus) ให้คงไว้ตามเดิม
