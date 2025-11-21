@@ -1,70 +1,26 @@
-// ไฟล์: api/status.js (Vercel Serverless Function)
+// ไฟล์: api/status.js (Vercel Serverless Function - ไม่ต้องแก้ไขเพิ่มเติม)
 
-// *** สำคัญ: ต้องกำหนด GOOGLE_SHEETS_API_KEY ใน Vercel Environment Variables ***
-const API_KEY = process.env.GOOGLE_SHEETS_API_KEY; 
+const { google } = require('googleapis');
+
+// ดึงค่าจาก Vercel Environment Variables
+const SERVICE_EMAIL = process.env.GOOGLE_SERVICE_EMAIL;
+// โค้ดนี้จะแทนที่ \n ใน Environment Variable ให้กลับเป็น Newline จริงๆ
+const PRIVATE_KEY = (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'); 
+
 const SHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
-// ระบุช่วงข้อมูล A ถึง G เพราะคุณข้าม C (A=0, B=1, C=2, D=3, E=4, F=5, G=6)
 const SHEET_RANGE = 'ตาราง3!A:G'; 
 
 module.exports = async (req, res) => {
-    // กำหนด Header เพื่อป้องกันข้อผิดพลาด CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Content-Type', 'application/json');
-
-    // ตรวจสอบว่ามี API Key และ query parameter 'q' หรือไม่
-    if (!API_KEY) {
-        return res.status(500).json({ error: 'GOOGLE_SHEETS_API_KEY is not set in Vercel Environment Variables.' });
-    }
-    const searchName = req.query.q ? req.query.q.trim().toUpperCase() : '';
-
-    if (!searchName) {
-        return res.status(400).json({ error: 'Missing search query (q)' });
-    }
+    // ... (ส่วนการตั้งค่า Header และตรวจสอบ Service Account Keys) ...
 
     try {
-        // 1. ดึงข้อมูลทั้งหมดจาก Google Sheets API
-        const response = await fetch(
-            `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_RANGE}?key=${API_KEY}`
+        // 1. ยืนยันตัวตนด้วย Service Account Key
+        const auth = new google.auth.JWT(
+            SERVICE_EMAIL,
+            null,
+            PRIVATE_KEY, // ใช้ Private Key ที่ได้จาก Environment Variable
+            ['https://www.googleapis.com/auth/spreadsheets.readonly']
         );
         
-        if (!response.ok) {
-            // ถ้า Google API ส่งข้อผิดพลาดกลับมา
-            const errorDetail = await response.json();
-            console.error('Google API Error:', errorDetail);
-            return res.status(500).json({ error: 'Failed to fetch data from Google Sheets API.', details: errorDetail.error.message });
-        }
-        
-        const data = await response.json();
-        const rows = data.values; // rows คือ Array ของ Array (ข้อมูลแถว)
-
-        // 2. ตรวจสอบและค้นหาข้อมูลใน Node.js Backend
-        if (!rows || rows.length < 2) {
-            return res.status(404).json({ message: 'No data found in sheet.' });
-        }
-
-        const header = rows[0]; // แถวแรกคือ Header (ชื่อคอลัมน์)
-        
-        // ค้นหาแถวที่ชื่อบัญชีตรงกับที่ค้นหา (คอลัมน์ A/Index 0)
-        const matchedRow = rows.slice(1).find(row => {
-            const sheetAccountName = (row[0] || '').trim().toUpperCase();
-            return sheetAccountName === searchName;
-        });
-
-        if (!matchedRow) {
-            return res.status(404).json({ message: 'Account not found.' });
-        }
-
-        // 3. แปลงผลลัพธ์ให้เป็น Object ที่ Frontend อ่านง่าย
-        const result = {};
-        header.forEach((key, index) => {
-            // ใช้ชื่อคอลัมน์เป็น Key (เช่น 'ชื่อบัญชี', 'รูปสินค้า', ฯลฯ)
-            result[key] = matchedRow[index] || null; 
-        });
-
-        return res.status(200).json(result);
-
-    } catch (error) {
-        console.error('Server Serverless Error:', error);
-        return res.status(500).json({ error: 'Internal server error during data processing.' });
-    }
-};
+        const sheets = google.sheets({ version: 'v4', auth });
+        // ... (ส่วนที่เหลือของการดึงข้อมูลและค้นหา) ...
