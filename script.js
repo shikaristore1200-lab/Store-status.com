@@ -1,11 +1,22 @@
-// ในไฟล์ script.js (ส่วนที่จัดการ Response)
+document.addEventListener('DOMContentLoaded', () => {
+    const trackingIdInput = document.getElementById('trackingIdInput');
+    const checkButton = document.getElementById('checkButton');
+    const resultsWrapper = document.getElementById('resultsWrapper');
+    const errorOutput = document.getElementById('errorOutput');
 
-// ... (โค้ดการประกาศตัวแปรและการจัดการ Event เหมือนเดิม) ...
+    if (checkButton) {
+        checkButton.addEventListener('click', checkStatus);
+    }
+
+    trackingIdInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkStatus();
+        }
+    });
 
     async function checkStatus() {
-        const trackingId = trackingIdInput.value.trim();
+        const trackingId = trackingIdInput.value.trim(); 
 
-        // เคลียร์ค่าเก่าและซ่อนส่วนแสดงผล
         resultsWrapper.innerHTML = '';
         resultsWrapper.style.display = 'none';
         errorOutput.style.display = 'none';
@@ -34,7 +45,7 @@
 
                 if (results && results.length > 0) {
                     
-                    // *** เริ่มการวนลูปสร้างการ์ดแยกตามจำนวนรายการสินค้า ***
+                    // *** วนลูปสร้างการ์ดแยกสำหรับแต่ละรายการ ***
                     results.forEach((item, index) => {
                         
                         // 1. จัดการ HTML รูปภาพสำหรับรายการปัจจุบัน
@@ -42,6 +53,7 @@
                         if (item.imageUrl && item.imageUrl.startsWith('http')) {
                             imageHTML = `<img src="${item.imageUrl}" alt="Product Image" class="product-img-dynamic">`;
                         } else {
+                            // แสดงกล่อง "ไม่มีรูปภาพ" หาก URL ไม่ถูกต้องหรือไม่ถูกระบุ
                             imageHTML = `
                                 <div class="no-image">
                                     <i class="fas fa-image"></i> ไม่มีรูปภาพ
@@ -49,7 +61,6 @@
                         }
 
                         // 2. สร้างแถวข้อมูลสำหรับตารางรายการปัจจุบัน
-                        // ใช้ item.status และ item.price ของรายการนั้นๆ
                         let tableRowsHtml = `
                             <div class="info-row">
                                 <div class="info-label">สถานะปัจจุบัน</div>
@@ -89,12 +100,9 @@
                             </div>
                         `;
                         
-                        // เพิ่มการ์ดนี้เข้าในตัวแปรรวม
                         allCardsHTML += cardHTML;
                     });
-                    // *** สิ้นสุดการวนลูป ***
-
-
+                    
                     resultsWrapper.innerHTML = allCardsHTML;
                     resultsWrapper.style.display = 'block';
 
