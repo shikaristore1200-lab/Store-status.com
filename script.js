@@ -1,11 +1,11 @@
 // ในไฟล์ script.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // *** แก้ไข ID ให้ตรงกับ index.html ***
+    // องค์ประกอบ Input และ Button
     const trackingIdInput = document.getElementById('trackingIdInput'); 
     const checkButton = document.getElementById('checkButton'); 
     
-    // Element สำหรับแสดงผลลัพธ์
+    // องค์ประกอบแสดงผลลัพธ์
     const resultContainer = document.getElementById('resultContainer');
     const productImage = document.getElementById('productImage');
     const statusOutput = document.getElementById('statusOutput');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorOutput.innerText = '';
         productImage.src = '';
         productImage.style.display = 'none';
-        resultContainer.style.display = 'none'; // ซ่อนกล่องผลลัพธ์ทั้งหมด
+        resultContainer.style.display = 'none'; 
 
         if (!trackingId) {
             errorOutput.innerText = 'กรุณากรอกรหัสติดตาม';
@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // ซ่อน Error ขณะกำลังค้นหา
         errorOutput.style.display = 'none';
         errorOutput.innerText = '';
 
@@ -49,7 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'success') {
                 const result = data.data;
                 
-                // 1. จัดรูปแบบข้อความสถานะ
+                // 1. จัดการรูปภาพ (โค้ดนี้จะรันก่อนการแสดงข้อความผลลัพธ์)
+                // รูปภาพจะแสดงในตำแหน่งที่กำหนดใน index.html (ซึ่งอยู่ด้านบน pre)
+                if (result.imageUrl && result.imageUrl.startsWith('http')) {
+                    productImage.src = result.imageUrl;
+                    productImage.style.display = 'block'; // แสดงรูปภาพ
+                } else {
+                    productImage.style.display = 'none'; // ซ่อนถ้าไม่มี URL รูปภาพ
+                }
+                
+                // 2. จัดรูปแบบข้อความสถานะ
                 const outputText = `
 **สถานะ:** ${result.status}
 รหัสติดตาม: ${result.trackingId}
@@ -58,26 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 
                 statusOutput.innerText = outputText;
-                resultContainer.style.display = 'block'; // แสดงกล่องผลลัพธ์
-
-                // 2. จัดการรูปภาพ
-                // ตรวจสอบว่ามี URL ที่ถูกต้องหรือไม่ (ต้องขึ้นต้นด้วย http)
-                if (result.imageUrl && result.imageUrl.startsWith('http')) {
-                    productImage.src = result.imageUrl;
-                    productImage.style.display = 'block'; // แสดงรูปภาพ
-                } else {
-                    productImage.style.display = 'none'; // ซ่อนถ้าไม่มี URL รูปภาพ
-                }
+                resultContainer.style.display = 'block'; // แสดงกล่องผลลัพธ์ทั้งหมด
 
             } else {
-                // แสดงข้อความ "ไม่พบรหัสติดตาม"
                 errorOutput.innerText = `🚨 ${data.message}`;
                 errorOutput.style.display = 'block';
             }
 
         } catch (error) {
             console.error('Fetch Error:', error);
-            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว'; // ข้อความเดิม
+            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว';
             errorOutput.style.display = 'block';
         }
     }
