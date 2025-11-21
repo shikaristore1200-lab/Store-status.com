@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const trackingIdInput = document.getElementById('trackingIdInput');
     const checkButton = document.getElementById('checkButton');
-    const resultsWrapper = document.getElementById('resultsWrapper'); // เปลี่ยน ID ให้ตรงกับ HTML ใหม่
+    // เปลี่ยนตัวแปรให้ชี้ไปที่ Wrapper ใหม่
+    const resultsWrapper = document.getElementById('resultsWrapper'); 
     const errorOutput = document.getElementById('errorOutput');
 
     if (checkButton) {
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.status === 'success') {
-                const results = data.data; // รับมาเป็น Array
+                const results = data.data; // รับมาเป็น Array (หลายรายการ)
                 
                 let allCardsHTML = '';
 
@@ -50,15 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     // เช็คว่ามีรูปไหม
                     let imageHTML = '';
                     if (item.imageUrl && item.imageUrl.startsWith('http')) {
-                        imageHTML = `<img src="${item.imageUrl}" alt="Product Image" style="width: 100%; height: auto; border-radius: 6px; border: 1px solid #dee2e6; padding: 5px; background: #fff;">`;
+                        imageHTML = `<img class="product-img-dynamic" src="${item.imageUrl}" alt="Product Image">`;
                     } else {
                         imageHTML = `
-                            <div class="no-image" style="width: 100%; height: 200px; background-color: #f1f3f5; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #adb5bd; border-radius: 6px; border: 2px dashed #dee2e6;">
+                            <div class="no-image">
                                 <i class="fas fa-image"></i> ไม่มีรูปภาพ
                             </div>`;
                     }
 
-                    // สร้าง HTML การ์ด 1 ใบ
+                    // สร้าง HTML การ์ด 1 ใบ (ใช้โครงสร้างเดียวกับ Style ที่เราทำไว้)
                     allCardsHTML += `
                     <div class="result-section" style="margin-bottom: 30px; animation: fadeIn 0.5s ease-out;">
                         <div class="result-header">
