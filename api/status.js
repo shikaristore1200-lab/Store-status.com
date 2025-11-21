@@ -6,7 +6,7 @@ const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ';
 
 // *** ชีต Summary และช่วงข้อมูล ***
 const SUMMARY_SHEET_NAME = 'Summary'; 
-const DATA_RANGE = 'A:G';
+const DATA_RANGE = 'A:G'; // ยังใช้ A:G เหมือนเดิม เพื่อเข้าถึง G
 
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 
@@ -36,10 +36,8 @@ module.exports = async (req, res) => {
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
         });
 
-        // ตรวจสอบการอนุญาต (Permissions) หากติดปัญหาเรื่อง Role Viewer ให้ตรวจสอบ Service Account Email และ Role ใน GCP
         const sheets = google.sheets({ version: 'v4', auth });
 
-        // อ่านข้อมูลจากชีต Summary
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: SHEET_NAME_RANGE,
@@ -51,35 +49,42 @@ module.exports = async (req, res) => {
         }
 
         const dataRows = rows.slice(1);
-        const trackingColIndex = 0; 
-        const imageUrlIndex = 1;    
-        const statusColIndex = 6;   
+        
+        // *** Final Index Mapping ตามที่ลูกค้าระบุ (A=0, B=1, C=2, D=3, E=4, F=5, G=6) ***
+        const accountNameIndex = 0;      // คอลัมน์ A (ชื่อบัญชี และ Search Key)
+        const imageUrlIndex = 1;         // คอลัมน์ B 
+        const productNameIndex = 3;      // คอลัมน์ D
+        const priceIndex = 4;            // คอลัมน์ E
+        const pendingPaymentIndex = 5;   // คอลัมน์ F (ค้างชำระ)
+        const statusColIndex = 6;        // คอลัมน์ G 
 
         let results = []; 
         const searchKey = trackingId.toString().trim();
 
         for (const row of dataRows) {
-            const sheetKey = (row[trackingColIndex] || '').toString().trim();
+            // ใช้คอลัมน์ A เป็น Key ในการค้นหา (Account Name)
+            const sheetKey = (row[accountNameIndex] || '').toString().trim();
 
             if (sheetKey === searchKey) {
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
                 results.push({
-                    trackingId: row[trackingColIndex] || 'N/A',
-                    imageUrl: row[imageUrlIndex] || '',
-                    productName: row[3] || 'ไม่ระบุสินค้า', // เพิ่มค่า default
-                    price: row[4] || '0',                   // เพิ่มค่า default
-                    status: status,                  
+                    accountName: row[accountNameIndex] || 'ไม่ระบุชื่อบัญชี', // คอลัมน์ A
+                    imageUrl: row[imageUrlIndex] || '', // คอลัมน์ B
+                    // ไม่มีการส่ง TrackingId/หมายเลขพัสดุ (คอลัมน์ C) กลับไปตามโครงสร้างใหม่
+                    productName: row[productNameIndex] || 'ไม่ระบุสินค้า', // คอลัมน์ D
+                    price: row[priceIndex] || '0', // คอลัมน์ E
+                    pendingPayment: row[pendingPaymentIndex] || '0', // คอลัมน์ F
+                    status: status, // คอลัมน์ G
                     allData: row                     
                 });
-                // ไม่ใช้ break เพื่อดึงทุกรายการ
             }
         }
         
         if (results.length > 0) {
             return res.status(200).json({ status: 'success', data: results });
         } else {
-            return res.status(404).json({ status: 'not_found', message: `ไม่พบรหัสติดตาม "${trackingId}" ในระบบ.` });
+            return res.status(404).json({ status: 'not_found', message: `ไม่พบชื่อบัญชี "${trackingId}" ในระบบ.` });
         }
 
     } catch (error) {
