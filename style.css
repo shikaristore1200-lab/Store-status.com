@@ -126,21 +126,27 @@ body {
 .result-body {
     display: flex;
     gap: 20px;
-    align-items: flex-start;
-    /* *** จุดที่แก้ไข 1: เพิ่มพื้นที่ว่างด้านล่างของกรอบทั้งหมด *** */
-    /* เดิมอาจจะไม่มีหรือมีค่าน้อย ลองเพิ่มเป็น 20px */
-    padding-bottom: 20px; 
+    /* *** จุดที่แก้ไข: เปลี่ยนการจัดเรียงแนวตั้งของ items ภายใน .result-body *** */
+    /* จาก align-items: flex-start; (ติดบน) */
+    /* เปลี่ยนเป็น align-items: center; เพื่อจัดกึ่งกลางแนวตั้ง */
+    align-items: center; 
+    
+    padding-bottom: 20px; /* รักษา padding ด้านล่างที่คุณเพิ่มไป */
+    padding: 20px; /* *** เพิ่ม padding โดยรวม เพื่อให้มีพื้นที่ว่างรอบๆ เนื้อหาใน result-body *** */
+                   /* จะช่วยให้รูปภาพและข้อมูลดูไม่ติดขอบด้านบน-ล่าง-ซ้าย-ขวา เกินไป */
 }
 
 /* คอลัมน์รูปภาพ */
 .image-col {
-    /* *** จุดที่แก้ไข: เพิ่มความกว้างคอลัมน์รูปภาพ *** */
-    /* จาก 170px (ในคำตอบก่อนหน้า) ลองเพิ่มเป็น 250px หรือ 300px */
     flex: 0 0 250px; 
     
     text-align: center;
     display: flex;
-    align-items: flex-start; 
+    /* *** จุดที่แก้ไข: เปลี่ยนการจัดเรียงแนวตั้งของรูปภาพภายในคอลัมน์รูปภาพเอง *** */
+    /* จาก align-items: flex-start; (ติดบน) */
+    /* เปลี่ยนเป็น align-items: center; เพื่อจัดกึ่งกลางแนวตั้ง */
+    align-items: center; 
+    
     justify-content: center;
 }
 
