@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const trackingIdInput = document.getElementById('trackingIdInput');
     const checkButton = document.getElementById('checkButton');
-    // เปลี่ยนตัวแปรให้ชี้ไปที่ Wrapper ใหม่
-    const resultsWrapper = document.getElementById('resultsWrapper'); 
+    const resultsWrapper = document.getElementById('resultsWrapper');
     const errorOutput = document.getElementById('errorOutput');
 
     if (checkButton) {
@@ -18,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function checkStatus() {
         const trackingId = trackingIdInput.value.trim();
 
-        // Reset UI
-        resultsWrapper.innerHTML = ''; // ล้างผลลัพธ์เก่า
+        // เคลียร์ค่าเก่า
+        resultsWrapper.innerHTML = '';
         resultsWrapper.style.display = 'none';
         errorOutput.style.display = 'none';
         
@@ -42,16 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.status === 'success') {
-                const results = data.data; // รับมาเป็น Array (หลายรายการ)
+                const results = data.data; // รับมาเป็น Array
                 
                 let allCardsHTML = '';
 
-                // *** วนลูปสร้างการ์ดสำหรับทุกรายการที่เจอ ***
+                // *** วนลูปสร้างการ์ดทีละใบ ***
                 results.forEach(item => {
-                    // เช็คว่ามีรูปไหม
+                    // เช็ครูป
                     let imageHTML = '';
                     if (item.imageUrl && item.imageUrl.startsWith('http')) {
-                        imageHTML = `<img class="product-img-dynamic" src="${item.imageUrl}" alt="Product Image">`;
+                        imageHTML = `<img src="${item.imageUrl}" alt="Product Image" class="product-img">`;
                     } else {
                         imageHTML = `
                             <div class="no-image">
@@ -59,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>`;
                     }
 
-                    // สร้าง HTML การ์ด 1 ใบ (ใช้โครงสร้างเดียวกับ Style ที่เราทำไว้)
+                    // สร้าง HTML การ์ดแนวนอน
                     allCardsHTML += `
-                    <div class="result-section" style="margin-bottom: 30px; animation: fadeIn 0.5s ease-out;">
+                    <div class="result-section">
                         <div class="result-header">
                             <h3><i class="fas fa-clipboard-check"></i> รายละเอียดการจัดส่ง</h3>
                         </div>
@@ -95,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 });
 
-                // ใส่ HTML ทั้งหมดลงใน Wrapper
+                // แสดงผลลัพธ์
                 resultsWrapper.innerHTML = allCardsHTML;
                 resultsWrapper.style.display = 'block';
 
