@@ -11,6 +11,7 @@ const DATA_RANGE = 'A:G';
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 
 module.exports = async (req, res) => {
+    // ตั้งค่า Header
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -52,14 +53,16 @@ module.exports = async (req, res) => {
         const imageUrlIndex = 1;    
         const statusColIndex = 6;   
 
-        // *** เปลี่ยนเป็น Array เพื่อเก็บหลายรายการ ***
+        // ---------------------------------------------------------
+        // จุดสำคัญ: สร้าง Array ว่างไว้เก็บผลลัพธ์หลายรายการ
+        // ---------------------------------------------------------
         let results = []; 
 
         for (const row of dataRows) {
             if (row[trackingColIndex] === trackingId) {
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
-                // เก็บข้อมูลลง Array แทนการทับค่าเดิม
+                // เจอแล้วให้ "ยัดใส่กล่อง results" แทนที่จะส่งกลับเลย
                 results.push({
                     trackingId: row[trackingColIndex],
                     imageUrl: row[imageUrlIndex] || '',
@@ -69,11 +72,11 @@ module.exports = async (req, res) => {
                     allData: row                     
                 });
                 
-                // *** ลบ break ออก เพื่อให้ค้นหาต่อจนจบ ***
+                // *** สำคัญมาก: ห้ามใส่ break; ตรงนี้เด็ดขาด เพื่อให้มันหาต่อจนครบ ***
             }
         }
         
-        // เช็คว่าเจอข้อมูลบ้างไหม
+        // ส่งผลลัพธ์ทั้งหมดกลับไป (ไม่ว่าจะเจอ 1 หรือ 10 รายการ)
         if (results.length > 0) {
             return res.status(200).json({ status: 'success', data: results });
         } else {
