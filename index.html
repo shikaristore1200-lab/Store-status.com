@@ -3,47 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจสอบสถานะพรีเมียม</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>ระบบตรวจสอบสถานะพัสดุ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="bg-animation"></div>
-
-    <div class="main-card">
-        <div class="header-section">
-            <div class="icon-wrapper">
-                <i class="fas fa-rocket fa-bounce"></i>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <i class="fas fa-box-open"></i> TRACKING SYSTEM
             </div>
-            <h1>TRACK & TRACE</h1>
-            <p class="subtitle">ตรวจสอบสถานะพัสดุของคุณด้วยความรวดเร็ว</p>
         </div>
+    </nav>
 
-        <div class="search-section">
-            <div class="input-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="trackingIdInput" placeholder="กรอกรหัสติดตามที่นี่ (เช่น @cat)">
-            </div>
-            <button id="checkButton" class="btn-grand">
-                ตรวจสอบทันที <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
-
-        <div id="errorOutput" class="error-box" style="display: none;"></div>
-
-        <div id="resultContainer" class="result-card" style="display: none;">
-            <div class="result-header">
-                <span class="badge">พบข้อมูล</span>
-            </div>
+    <div class="main-wrapper">
+        <div class="search-card">
+            <h2><i class="fas fa-search-location"></i> ตรวจสอบสถานะพัสดุ</h2>
+            <p class="sub-text">กรุณากรอกหมายเลขพัสดุเพื่อค้นหาข้อมูล</p>
             
-            <div class="product-showcase">
-                <img id="productImage" src="" alt="Product Image" style="display: none;">
+            <div class="search-box">
+                <input type="text" id="trackingIdInput" placeholder="ระบุเลขพัสดุ (เช่น @cat)">
+                <button id="checkButton">
+                    ค้นหา <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
 
-            <div id="statusOutput" class="details-box">
+            <div id="errorOutput" class="alert-box error" style="display: none;"></div>
+        </div>
+
+        <div id="resultContainer" class="result-section" style="display: none;">
+            <div class="result-header">
+                <h3><i class="fas fa-clipboard-check"></i> รายละเอียดการจัดส่ง</h3>
+            </div>
+
+            <div class="result-body">
+                <div class="image-col">
+                    <img id="productImage" src="" alt="Product Image" style="display: none;">
+                    <div id="noImagePlaceholder" class="no-image" style="display: none;">
+                        <i class="fas fa-image"></i> ไม่มีรูปภาพ
+                    </div>
                 </div>
+                
+                <div class="info-col">
+                    <div id="statusOutput" class="info-grid"></div>
+                </div>
+            </div>
         </div>
     </div>
 
