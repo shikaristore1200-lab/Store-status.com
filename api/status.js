@@ -3,7 +3,7 @@ const { google } = require('googleapis');
 
 // รหัส Google Sheet ของคุณ (คัดลอกจาก URL ระหว่าง /d/ กับ /edit)
 // ตัวอย่าง: https://docs.google.com/spreadsheets/d/SHEET_ID_HERE/edit
-const SPREADSHEET_ID = 'ใส่-GOOGLE-SHEET-ID-ของคุณ-ที่นี่'; 
+const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
 // ชื่อชีตและช่วงข้อมูลที่ต้องการอ่าน (เช่น 'ตาราง3!A:G')
 const SHEET_NAME_RANGE = 'ตาราง3!A:G'; 
