@@ -253,4 +253,14 @@ body {
         border-bottom: 1px solid #eee;
         font-weight: 500;
     }
+    /* เพิ่มต่อท้ายไฟล์ style.css */
+
+.product-img-dynamic {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 5px;
+    background: #fff;
+}
 }
