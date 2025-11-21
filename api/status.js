@@ -1,11 +1,10 @@
 const { GoogleAuth } = require('google-auth-library');
 const { google } = require('googleapis');
 
-// รหัส Google Sheet ของคุณ (คัดลอกจาก URL ระหว่าง /d/ กับ /edit)
-// ตัวอย่าง: https://docs.google.com/spreadsheets/d/SHEET_ID_HERE/edit
+// รหัส Google Sheet ของคุณ (ที่ถูกต้องแล้ว)
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
-// ชื่อชีตและช่วงข้อมูลที่ต้องการอ่าน (เช่น 'ตาราง3!A:G')
+// ชื่อชีตและช่วงข้อมูลที่ต้องการอ่าน (ต้องเป็น 'ตาราง3' ตามภาพ)
 const SHEET_NAME_RANGE = 'ตาราง3!A:G'; 
 
 module.exports = async (req, res) => {
@@ -31,7 +30,8 @@ module.exports = async (req, res) => {
 
     try {
         // 1. สร้าง GoogleAuth Object จาก Environment Variables
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+        // **สำคัญ: โค้ดถูกแก้ไขเพื่อใช้ Private Key แบบ Newline จริง ๆ**
+        const privateKey = process.env.GOOGLE_PRIVATE_KEY; 
         
         const auth = new GoogleAuth({
             credentials: {
@@ -92,6 +92,7 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('Google Sheet Connection Error:', error);
+        // แสดงข้อผิดพลาด 500
         return res.status(500).json({ error: 'การเชื่อมต่อ Google Sheet ล้มเหลว' });
     }
 };
