@@ -146,7 +146,7 @@ body {
 .product-img-dynamic {
     width: 100%;
     height: auto;
-    max-height: 150px; /* จำกัดความสูงรูปภาพ */
+    max-height: 200px; /* จำกัดความสูงรูปภาพ */
     object-fit: contain; 
     
     border-radius: 6px;
