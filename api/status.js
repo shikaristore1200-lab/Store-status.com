@@ -2,6 +2,7 @@ const { GoogleAuth } = require('google-auth-library');
 const { google } = require('googleapis');
 
 // *** ID ของ Google Sheet ของคุณ ***
+// กรุณาเปลี่ยนเป็น ID ของ Google Sheet จริงของคุณ
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
 // *** ชีต Summary และช่วงข้อมูล ***
@@ -76,12 +77,12 @@ module.exports = async (req, res) => {
                     allData: row                     
                 });
                 
-                // *** ห้ามใส่ break ตรงนี้เด็ดขาด ***
+                // *** ไม่มี break เพื่อให้ค้นหาจนครบทุกรายการ ***
             }
         }
         
         if (results.length > 0) {
-            // เจอข้อมูล (อาจจะ 1 หรือมากกว่า)
+            // ตอบกลับด้วย Array ของผลลัพธ์ทั้งหมด
             return res.status(200).json({ status: 'success', data: results });
         } else {
             return res.status(404).json({ status: 'not_found', message: `ไม่พบรหัสติดตาม "${trackingId}" ในระบบ.` });
