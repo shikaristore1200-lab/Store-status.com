@@ -1,47 +1,98 @@
-// ฟังก์ชันสำหรับตรวจสอบ (DEBUGGING MODE)
+// *****************************************************************
+// *** ไม่ต้องกำหนด Sheet ID/GID ที่นี่ เพราะ Vercel Function จะจัดการ ***
+// *****************************************************************
+
+// ฟังก์ชันหลักที่ถูกเรียกเมื่อผู้ใช้กดปุ่ม 'ตรวจสอบสถานะ'
 async function checkStatus() {
     const idInput = document.getElementById('statusId');
-    const searchAccountName = idInput.value.trim().toUpperCase(); 
+    // แปลงชื่อบัญชีที่ผู้ใช้กรอกเป็นตัวพิมพ์ใหญ่และตัดช่องว่าง
+    const searchAccountName = idInput.value.trim(); 
     const resultDiv = document.getElementById('result');
 
-    resultDiv.innerHTML = '<p style="color: #007bff;">⏳ กำลังดึงข้อมูลดิบจาก Sheet...</p>';
-    
-    // ***************************************************
-    // ** โค้ดสำหรับ DEBUGGING: แสดงผลข้อมูลดิบทั้งหมด **
-    // ***************************************************
+    resultDiv.innerHTML = '<p style="color: #007bff;">⏳ กำลังตรวจสอบสถานะผ่าน Vercel Server...</p>';
+
+    if (searchAccountName === "") {
+        resultDiv.innerHTML = '<p style="color: red;">❌ กรุณากรอกชื่อบัญชีค่ะ</p>';
+        return;
+    }
+
     try {
-        const response = await fetch(SHEET_URL);
-        const text = await response.text();
+        // เรียกใช้ Vercel Serverless Function ที่ /api/status โดยส่งชื่อบัญชีผ่าน query parameter 'q'
+        const response = await fetch(`/api/status?q=${searchAccountName}`);
         
-        // ตัดส่วนที่ไม่ใช่ JSON ออก
-        const jsonText = text.replace(/^google\.visualization\.Query\.setResponse\({/i, '{').replace(/\);$/, '');
-        
-        const dataObject = JSON.parse(jsonText);
-        const rows = dataObject.table.rows;
-        
-        // แปลงข้อมูลแถวแรก ๆ ให้เป็นข้อความที่อ่านได้
-        let debugOutput = '<h3>DEBUG: ข้อมูลดิบจาก Sheet (แถวแรกๆ)</h3>';
-        debugOutput += '<p>ค่าที่ใช้ค้นหา: <strong>' + searchAccountName + '</strong></p>';
-        
-        // แสดงข้อมูลในแถวแรกๆ 3-5 แถว เพื่อดูรูปแบบ
-        for (let i = 0; i < Math.min(rows.length, 5); i++) {
-            const row = rows[i].c;
-            const accountNameValue = row[0]?.v || 'NULL/EMPTY'; // คอลัมน์ A (ชื่อบัญชี)
-            const productNameValue = row[3]?.v || 'NULL/EMPTY'; // คอลัมน์ D (ชื่อสินค้า)
-            
-            debugOutput += `<p>แถว ${i + 1}: [A] = <strong>${accountNameValue}</strong>, [D] = ${productNameValue}</p>`;
+        if (response.status === 404) {
+             // 404 จาก Serverless Function หมายถึง ไม่พบชื่อบัญชี
+            displayStatus(null, searchAccountName, resultDiv);
+            return;
         }
+
+        if (!response.ok) {
+            // ดักจับข้อผิดพลาดอื่น ๆ จาก Server
+            const errorData = await response.json();
+            resultDiv.innerHTML = `<p style="color: #dc3545;">🚨 ข้อผิดพลาดของเซิร์ฟเวอร์: ${errorData.error || 'ไม่สามารถดึงข้อมูลได้'}</p>`;
+            return;
+        }
+
+        // ดึงข้อมูลสถานะจาก Serverless Function
+        const statusData = await response.json(); 
         
-        resultDiv.innerHTML = debugOutput;
-        console.log('Raw Sheet Data:', dataObject); // ดูข้อมูลเต็มใน Console (F12)
+        // ส่งข้อมูลที่ได้ไปแสดงผล
+        displayStatus(statusData, searchAccountName, resultDiv);
 
     } catch (error) {
-        console.error('Fetch/Parse Error:', error);
-        resultDiv.innerHTML = '<p style="color: #dc3545;">🚨 การเชื่อมต่อ Google Sheet ล้มเหลว</p>';
+        console.error('Fetch Error:', error);
+        resultDiv.innerHTML = '<p style="color: #dc3545;">🚨 การเชื่อมต่อกับเซิร์ฟเวอร์ Vercel ล้มเหลว</p>';
     }
-    // ***************************************************
-    // ** สิ้นสุดโค้ด DEBUGGING **
-    // ***************************************************
 }
 
-// ... ส่วนที่เหลือของ script.js (findStatus, displayStatus) ให้คงไว้ตามเดิม
+// ***************************************************************
+// *** ฟังก์ชัน displayStatus (รับข้อมูลที่เป็น Object ที่มีชื่อ Key) ***
+// ***************************************************************
+
+function displayStatus(data, searchName, resultDiv) {
+    if (!data) {
+        resultDiv.innerHTML = `
+            <p style="color: #6c757d; font-weight: bold;">⚫ ไม่พบชื่อบัญชี "${searchName}" ในระบบ</p>
+            <p style="color: #6c757d;">กรุณาตรวจสอบชื่อบัญชีอีกครั้ง</p>
+        `;
+        return;
+    }
+    
+    // ดึงข้อมูลจาก Object โดยใช้ชื่อคอลัมน์เป็น Key
+    const accountName = data['ชื่อบัญชี'] || '-';
+    const imageUrl = data['รูปสินค้า'] || '';
+    const productName = data['ชื่อสินค้า'] || '-'; 
+    const price = data['ราคาสินค้า'] || '0';
+    const remaining = data['ค้างชำระ'] || '0';
+    const status = data['สถานะ'] || 'ไม่ระบุสถานะ'; 
+
+    let statusColor;
+    let statusIcon;
+    if (status.includes("อนุมัติแล้ว") || status.includes("จัดส่ง")) {
+        statusColor = "#28a745"; 
+        statusIcon = '<i class="fas fa-check-circle"></i>';
+    } else if (status.includes("กำลัง") || status.includes("รอ")) {
+        statusColor = "#ffc107"; 
+        statusIcon = '<i class="fas fa-hourglass-half"></i>';
+    } else if (status.includes("ปฏิเสธ") || status.includes("ยกเลิก")) {
+        statusColor = "#dc3545"; 
+        statusIcon = '<i class="fas fa-times-circle"></i>';
+    } else {
+        statusColor = "#3f51b5"; 
+        statusIcon = '<i class="fas fa-info-circle"></i>';
+    }
+
+    const imageHtml = imageUrl ? `<img src="${imageUrl}" alt="${productName}" class="product-image">` : '';
+
+    resultDiv.innerHTML = `
+        <div class="status-header">
+            <h3 style="color: ${statusColor};">${statusIcon} สถานะ: ${status}</h3>
+        </div>
+        
+        <div class="product-info-grid">
+            ${imageHtml}
+            <div>
+                <p><strong>ชื่อบัญชี:</strong> ${accountName}</p>
+                <p><strong>ชื่อสินค้า:</strong> ${productName}</p>
+            </div>
+        </div>
