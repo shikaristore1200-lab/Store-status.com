@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็คสถานะจาก Google Sheet</title>
+    <title>✨ ระบบเช็คสถานะสินค้า/เอกสาร ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>🔍 เช็คสถานะสินค้า/เอกสาร</h1>
-        <p>กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะ</p>
+        <h1><i class="fas fa-shipping-fast"></i> ตรวจสอบสถานะ</h1> <p class="subtitle">กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะของคุณ</p>
 
         <div class="input-group">
             <label for="statusId">รหัสติดตาม:</label>
-            <input type="text" id="statusId" placeholder="เช่น P-101">
-            <button onclick="checkStatus()">ตรวจสอบสถานะ</button>
-        </div>
+            <input type="text" id="statusId" placeholder="เช่น P-101 หรือ ABC-12345">
+            <button onclick="checkStatus()"><i class="fas fa-search"></i> ตรวจสอบ</button> </div>
 
         <div id="result">
             </div>
