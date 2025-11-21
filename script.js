@@ -1,45 +1,80 @@
-document.getElementById('checkStatus').addEventListener('click', checkStatus);
+// ในไฟล์ script.js
 
-async function checkStatus() {
-    const trackingIdInput = document.getElementById('trackingId');
-    const resultBox = document.getElementById('resultBox');
-    const trackingId = trackingIdInput.value.trim();
+document.addEventListener('DOMContentLoaded', () => {
+    const trackingIdInput = document.getElementById('trackingIdInput'); // สมมติว่านี่คือ ID ของช่อง input
+    const checkButton = document.getElementById('checkButton'); // สมมติว่านี่คือ ID ของปุ่มตรวจสอบ
+    
+    // Element ใหม่ที่เราเพิ่มใน index.html
+    const resultContainer = document.getElementById('resultContainer');
+    const productImage = document.getElementById('productImage');
+    const statusOutput = document.getElementById('statusOutput');
+    const errorOutput = document.getElementById('errorOutput');
 
-    resultBox.innerHTML = 'กำลังตรวจสอบ...';
-    resultBox.classList.remove('hidden');
-
-    if (!trackingId) {
-        resultBox.innerHTML = '<div class="status-item"><span class="status-label">ข้อผิดพลาด:</span> <span class="status-value error">กรุณากรอกรหัสติดตาม</span></div>';
-        return;
+    if (checkButton) {
+        checkButton.addEventListener('click', checkStatus);
     }
 
-    try {
-        const response = await fetch('/api/status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ trackingId: trackingId })
-        });
+    async function checkStatus() {
+        const trackingId = trackingIdInput.value.trim();
 
-        const data = await response.json();
+        // เคลียร์ผลลัพธ์เดิม
+        statusOutput.innerText = '';
+        errorOutput.innerText = '';
+        productImage.src = '';
+        productImage.style.display = 'none';
+        resultContainer.style.display = 'none';
 
-        if (response.ok && data.status === 'success') {
-            const result = data.data;
-            resultBox.innerHTML = `
-                <div class="status-item"><span class="status-label">รหัสติดตาม:</span> <span class="status-value">${result.trackingId}</span></div>
-                <div class="status-item"><span class="status-label">สินค้า:</span> <span class="status-value">${result.productName}</span></div>
-                <div class="status-item"><span class="status-label">ราคา:</span> <span class="status-value">${result.price}</span></div>
-                <div class="status-item"><span class="status-label">สถานะล่าสุด:</span> <span class="status-value success">${result.status}</span></div>
-            `;
-        } else if (response.status === 404 && data.status === 'not_found') {
-            resultBox.innerHTML = `<div class="status-item"><span class="status-label">ไม่พบ:</span> <span class="status-value error">${data.message}</span></div>`;
-        } else {
-            // กรณีเกิดข้อผิดพลาดในการเชื่อมต่อ (เช่น 500 Internal Server Error)
-            resultBox.innerHTML = `<div class="status-item"><span class="status-label">ข้อผิดพลาด:</span> <span class="status-value error">🚨 ${data.error || 'การเชื่อมต่อ Google Sheet ล้มเหลว'}</span></div>`;
+        if (!trackingId) {
+            errorOutput.innerText = 'กรุณากรอกรหัสติดตาม';
+            errorOutput.style.display = 'block';
+            return;
         }
-    } catch (error) {
-        console.error('Fetch Error:', error);
-        resultBox.innerHTML = '<div class="status-item"><span class="status-label">ข้อผิดพลาด:</span> <span class="status-value error">ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้</span></div>';
+
+        try {
+            const response = await fetch('/api/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ trackingId: trackingId })
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                const result = data.data;
+                errorOutput.style.display = 'none';
+
+                // 1. จัดรูปแบบข้อความสถานะ
+                const outputText = `
+**สถานะ:** ${result.status}
+รหัสติดตาม: ${result.trackingId}
+สินค้า: ${result.productName}
+ราคา: ${result.price}
+                `;
+                
+                statusOutput.innerText = outputText;
+                resultContainer.style.display = 'block';
+
+                // 2. จัดการรูปภาพ
+                // ตรวจสอบว่ามี URL ที่ถูกต้องหรือไม่ (ต้องขึ้นต้นด้วย http)
+                if (result.imageUrl && result.imageUrl.startsWith('http')) {
+                    productImage.src = result.imageUrl;
+                    productImage.style.display = 'block'; // แสดงรูปภาพ
+                } else {
+                    productImage.style.display = 'none'; // ซ่อนถ้าไม่มี URL รูปภาพ
+                }
+
+            } else {
+                // แสดงข้อความ "ไม่พบรหัสติดตาม"
+                errorOutput.innerText = `🚨 ${data.message}`;
+                errorOutput.style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            errorOutput.innerText = '❌ การเชื่อมต่อ Google Sheet ล้มเหลว';
+            errorOutput.style.display = 'block';
+        }
     }
-}
+});
