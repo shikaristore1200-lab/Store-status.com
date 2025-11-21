@@ -15,9 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function checkStatus() {
-        const trackingId = trackingIdInput.value.trim();
+        // ใช้ .trim() เพื่อตัดช่องว่างที่อาจติดมา
+        const trackingId = trackingIdInput.value.trim(); 
 
-        // เคลียร์ค่าเก่า
+        // เคลียร์ค่าเก่าและซ่อนส่วนแสดงผล
         resultsWrapper.innerHTML = '';
         resultsWrapper.style.display = 'none';
         errorOutput.style.display = 'none';
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkButton.disabled = true;
 
         try {
+            // *** API ต้องส่งผลลัพธ์ทั้งหมด (Array) กลับมา ***
             const response = await fetch('/api/status', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -41,15 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.status === 'success') {
-                const results = data.data; // รับมาเป็น Array ของรายการทั้งหมด
-                const firstItem = results[0]; // ใช้รายการแรกเป็นข้อมูลหลัก
+                const results = data.data; // Array ของรายการที่ตรงกัน
+                const firstItem = results[0]; 
 
                 if (!firstItem) {
-                    showError(`ไม่พบรหัสติดตาม "${trackingId}" ในระบบ.`);
+                    showError(`ไม่พบข้อมูลสถานะสำหรับรหัสนี้`);
                     return;
                 }
                 
-                // 1. สร้าง HTML รูปภาพ (ใช้รูปภาพจากรายการแรก)
+                // 1. จัดการ HTML รูปภาพ
                 let imageHTML = '';
                 if (firstItem.imageUrl && firstItem.imageUrl.startsWith('http')) {
                     imageHTML = `<img src="${firstItem.imageUrl}" alt="Product Image" class="product-img-dynamic">`;
@@ -60,11 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>`;
                 }
 
-                // 2. สร้างแถวข้อมูลในตาราง
-                let tableRowsHtml = '';
-                
-                // ใส่แถวสถานะปัจจุบันและรหัสติดตาม (ใช้ข้อมูลจากรายการแรก)
-                tableRowsHtml += `
+                // 2. สร้างแถวข้อมูลหลัก (สถานะและรหัส)
+                let tableRowsHtml = `
                     <div class="info-row">
                         <div class="info-label">สถานะปัจจุบัน</div>
                         <div class="info-value status-highlight">${firstItem.status}</div>
@@ -75,8 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // วนลูปสร้างแถวสำหรับรายการสินค้าและยอดชำระของทุกออเดอร์
+                // 3. วนลูปสร้างแถวสำหรับรายละเอียดสินค้าและราคาของทุกออเดอร์
                 results.forEach((item, index) => {
+                    // กำหนดเลขกำกับ (1) (2) ถ้ามีหลายรายการ
                     const orderNumber = results.length > 1 ? ` (${index + 1})` : '';
 
                     tableRowsHtml += `
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 });
 
-                // 3. ประกอบร่างเป็นการ์ดเดียว
+                // 4. ประกอบร่างเป็นการ์ดเดียว
                 const finalCardHTML = `
                     <div class="result-section">
                         <div class="result-header">
@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // แสดงผลลัพธ์
                 resultsWrapper.innerHTML = finalCardHTML;
                 resultsWrapper.style.display = 'block';
 
