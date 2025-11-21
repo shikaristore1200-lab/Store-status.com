@@ -1,18 +1,156 @@
-/* ในไฟล์ style.css: ค้นหาส่วน #productImage แล้วแก้ไขดังนี้ */
+/* style.css (ปรับปรุงใหม่ตามตัวอย่าง) */
 
-#productImage {
-    /* ปรับ max-width ให้เล็กลง และเพิ่ม max-height */
-    max-width: 250px; /* จำกัดความกว้างสูงสุดของรูปภาพ */
-    max-height: 250px; /* จำกัดความสูงสูงสุดของรูปภาพ */
-    
-    height: auto;
-    display: block; 
-    margin: 0 auto 20px auto; 
-    object-fit: contain; /* ทำให้รูปภาพพอดีโดยไม่ถูกตัด */
-    
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
-    border: 1px solid #eee; 
+/* รีเซ็ตค่าเริ่มต้น */
+body, h1, h2, h3, p, div, input, button, pre {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* ... โค้ด CSS ส่วนที่เหลือเหมือนเดิม ... */
+/* กำหนดฟอนต์และพื้นหลังทั่วโลก */
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #eef7ff; /* สีพื้นหลังฟ้าอ่อน */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container หลักของเนื้อหาทั้งหมด */
+.container {
+    background-color: #ffffff;
+    padding: 40px 30px; /* ปรับ Padding */
+    border-radius: 16px; /* ขอบโค้งที่โดดเด่น */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* เงาที่ชัดเจนขึ้น */
+    max-width: 450px; /* จำกัดความกว้างให้แคบลงเล็กน้อย */
+    width: 100%;
+    text-align: center;
+}
+
+/* Header ส่วนบนสุด */
+.header {
+    font-size: 1.8em; /* ขนาดเหมาะสม */
+    font-weight: 700;
+    color: #007bff; /* สีฟ้าที่ใช้บ่อยในภาพตัวอย่าง */
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.header i {
+    color: #28a745; /* สีเขียวสำหรับไอคอน */
+    font-size: 1.1em;
+}
+
+/* ข้อความแนะนำ */
+.instruction {
+    font-size: 1em;
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+/* กลุ่ม Input และ Button */
+.input-group {
+    display: flex;
+    gap: 10px; 
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+#trackingIdInput {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ced4da; /* ขอบบางๆ */
+    border-radius: 8px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#trackingIdInput:focus {
+    border-color: #007bff;
+}
+
+#checkButton {
+    background-color: #28a745; /* สีเขียวสดใส */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#checkButton:hover {
+    background-color: #218838;
+}
+
+/* กล่องแสดงข้อผิดพลาด */
+#errorOutput {
+    color: #dc3545; /* สีแดง */
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 5px;
+}
+
+/* กล่องผลลัพธ์ทั้งหมด */
+#resultContainer {
+    background-color: #f8f9fa; /* พื้นหลังสีเทาอ่อนมาก */
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef; /* ขอบอ่อนๆ */
+    margin-top: 25px;
+    text-align: center; /* จัดกึ่งกลางรูปภาพและข้อความ */
+}
+
+/* รูปภาพสินค้า */
+#productImage {
+    /* ปรับขนาดให้ไม่ใหญ่เกินไปตามที่คุณต้องการ */
+    max-width: 250px; 
+    max-height: 250px; 
+    height: auto;
+    display: block; 
+    margin: 0 auto 20px auto; /* จัดกึ่งกลางและมีระยะห่างด้านล่าง */
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    object-fit: contain; 
+}
+
+/* กล่องแสดงสถานะ (pre) */
+#statusOutput {
+    font-size: 1em;
+    color: #343a40;
+    padding: 10px 0;
+    margin: 0;
+    text-align: center; /* จัดกึ่งกลางข้อความผลลัพธ์ */
+    white-space: pre-wrap; 
+}
+
+#statusOutput strong {
+    color: #28a745; /* สีเขียวสำหรับสถานะสำคัญ */
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+    .input-group {
+        flex-direction: column;
+    }
+    #checkButton {
+        width: 100%;
+    }
+}
