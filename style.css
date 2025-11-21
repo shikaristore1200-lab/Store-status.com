@@ -124,14 +124,17 @@ body {
 }
 
 .result-body {
-    display: flex; 
-    padding: 20px;
-    gap: 20px;
+    display: flex;
+    gap: 20px; /* ระยะห่างระหว่างรูปภาพกับข้อมูล */
+    align-items: flex-start;
 }
 
 /* คอลัมน์รูปภาพ */
 .image-col {
-    flex: 0 0 150px; /* จำกัดความกว้างคอลัมน์รูปภาพ */
+    /* *** จุดที่แก้ไข: เพิ่มความกว้างคอลัมน์รูปภาพ *** */
+    /* จาก 170px (ในคำตอบก่อนหน้า) ลองเพิ่มเป็น 250px หรือ 300px */
+    flex: 0 0 250px; 
+    
     text-align: center;
     display: flex;
     align-items: flex-start; 
@@ -139,14 +142,15 @@ body {
 }
 
 .info-col {
-    flex: 1; 
+    flex: 1; /* ใช้พื้นที่ที่เหลือทั้งหมด */
 }
-
-/* รูปภาพสินค้า */
 .product-img-dynamic {
-    width: 150%;
+    width: 100%;
     height: auto;
-    max-height: 150px; /* จำกัดความสูงรูปภาพ */
+    /* *** จุดที่แก้ไข: เพิ่มความสูงสูงสุดของรูปภาพ *** */
+    /* จาก 150px (ในคำตอบก่อนหน้า) ลองเพิ่มเป็น 250px หรือ 300px */
+    max-height: 250px; 
+    
     object-fit: contain; 
     
     border-radius: 6px;
@@ -156,17 +160,19 @@ body {
     box-sizing: border-box;
 }
 
-.no-image {
+..no-image {
     width: 100%;
-    height: 150px;
-    background-color: #f8f9fa;
+    /* *** จุดที่แก้ไข: ความสูงของกล่องไม่มีรูปภาพ *** */
+    /* ให้เท่ากับ max-height ของรูปภาพที่ปรับแล้ว */
+    height: 250px; 
+    background-color: #e9ecef;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #adb5bd;
     border-radius: 6px;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed #ced4da;
     font-size: 0.9em;
 }
 
@@ -214,6 +220,11 @@ body {
     }
     
     .info-label {
-        width: 40%;
-    }
+    /* ใช้ค่าเดิมที่คุณปรับเพื่อให้คำชิดซ้าย */
+    width: 80px; 
+    font-weight: 600;
+    color: #495057;
+    flex-shrink: 0;
+}
+
 }
