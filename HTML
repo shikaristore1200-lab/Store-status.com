@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คสถานะจาก Google Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>🔍 เช็คสถานะสินค้า/เอกสาร</h1>
+        <p>กรุณากรอกรหัสติดตามเพื่อตรวจสอบสถานะ</p>
+
+        <div class="input-group">
+            <label for="statusId">รหัสติดตาม:</label>
+            <input type="text" id="statusId" placeholder="เช่น P-101">
+            <button onclick="checkStatus()">ตรวจสอบสถานะ</button>
+        </div>
+
+        <div id="result">
+            </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
