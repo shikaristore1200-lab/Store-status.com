@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorOutput.style.display = 'none';
         
         if (!trackingId) {
-            showError('กรุณาระบุหมายเลขพัสดุ');
+            showError('กรุณาระบุชื่อบัญชี'); 
             return;
         }
 
@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.status === 'success') {
-                const results = data.data; // Array ของรายการที่ตรงกันทั้งหมด
-                let allCardsHTML = ''; // ตัวแปรสำหรับเก็บ HTML ของทุกการ์ด
+                const results = data.data; 
+                let allCardsHTML = ''; 
 
                 if (results && results.length > 0) {
                     
@@ -53,23 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (item.imageUrl && item.imageUrl.startsWith('http')) {
                             imageHTML = `<img src="${item.imageUrl}" alt="Product Image" class="product-img-dynamic">`;
                         } else {
-                            // แสดงกล่อง "ไม่มีรูปภาพ" หาก URL ไม่ถูกต้องหรือไม่ถูกระบุ
                             imageHTML = `
                                 <div class="no-image">
                                     <i class="fas fa-image"></i> ไม่มีรูปภาพ
                                 </div>`;
                         }
 
-                        // 2. สร้างแถวข้อมูลสำหรับตารางรายการปัจจุบัน
+                        // 2. สร้างแถวข้อมูลตามลำดับใหม่ที่คุณต้องการ
                         let tableRowsHtml = `
+                            <div class="info-row">
+                                <div class="info-label">ชื่อบัญชี</div>
+                                <div class="info-value">${item.accountName}</div> 
+                            </div>
+                            
                             <div class="info-row">
                                 <div class="info-label">สถานะปัจจุบัน</div>
                                 <div class="info-value status-highlight">${item.status}</div>
                             </div>
-                            <div class="info-row">
-                                <div class="info-label">หมายเลขพัสดุ</div>
-                                <div class="info-value">${item.trackingId}</div>
-                            </div>
+                            
                             <div class="info-row">
                                 <div class="info-label">รายการสินค้า</div>
                                 <div class="info-value">${item.productName}</div>
@@ -77,6 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="info-row">
                                 <div class="info-label">ยอดชำระ</div>
                                 <div class="info-value">${item.price} บาท</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-label">ค้างชำระ</div>
+                                <div class="info-value">${item.pendingPayment} บาท</div>
                             </div>
                         `;
 
@@ -107,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultsWrapper.style.display = 'block';
 
                 } else {
-                    showError(`ไม่พบข้อมูลสถานะสำหรับรหัสนี้`);
+                    showError(`ไม่พบข้อมูลสถานะสำหรับชื่อบัญชีนี้`);
                 }
 
             } else {
