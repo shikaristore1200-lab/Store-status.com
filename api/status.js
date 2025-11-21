@@ -6,7 +6,7 @@ const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ';
 // *** เปลี่ยนมาใช้ชีตสรุปใหม่ที่คุณสร้างขึ้นมาเท่านั้น ***
 // คุณสามารถตั้งชื่อชีตนี้ว่า 'Summary' หรือ 'รวมข้อมูล' ก็ได้
 const SUMMARY_SHEET_NAME = 'Summary'; // <-- เปลี่ยนเป็นชื่อชีตสรุปของคุณ
-const DATA_RANGE = 'A:I'; // ดึงข้อมูลทุกคอลัมน์ที่จำเป็น
+const DATA_RANGE = 'A:G'; // ดึงข้อมูลทุกคอลัมน์ที่จำเป็น
 
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 // โค้ดจะดึงข้อมูลจากชีต Summary เท่านั้น
