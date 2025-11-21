@@ -256,8 +256,16 @@ body {
     /* เพิ่มต่อท้ายไฟล์ style.css */
 
 .product-img-dynamic {
-    width: 100%;
+   width: 100%;
     height: auto;
+    
+    /* *** เพิ่ม/แก้ไขตรงนี้ *** */
+    /* จำกัดความสูงสูงสุดของรูปภาพ เช่น ไม่ให้เกิน 150px-200px */
+    max-height: 180px; 
+    
+    /* ให้รูปภาพคงสัดส่วนเดิมเมื่อถูกจำกัดขนาด */
+    object-fit: contain; 
+    
     border-radius: 6px;
     border: 1px solid #dee2e6;
     padding: 5px;
