@@ -11,7 +11,7 @@ const DATA_RANGE = 'A:G';
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
 
 module.exports = async (req, res) => {
-    // ตั้งค่า Header
+    // ตั้งค่า Header (CORS)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -38,6 +38,7 @@ module.exports = async (req, res) => {
 
         const sheets = google.sheets({ version: 'v4', auth });
 
+        // อ่านข้อมูลจากชีต Summary
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: SHEET_NAME_RANGE,
@@ -53,18 +54,21 @@ module.exports = async (req, res) => {
         const imageUrlIndex = 1;    
         const statusColIndex = 6;   
 
-        // ---------------------------------------------------------
-        // จุดสำคัญ: สร้าง Array ว่างไว้เก็บผลลัพธ์หลายรายการ
-        // ---------------------------------------------------------
         let results = []; 
 
+        // แปลงสิ่งที่ลูกค้าพิมพ์มา ให้ตัดช่องว่างออก
+        const searchKey = trackingId.toString().trim();
+
         for (const row of dataRows) {
-            if (row[trackingColIndex] === trackingId) {
+            // ดึงข้อมูลจาก Sheet และตัดช่องว่างออกด้วย (.trim()) เพื่อกันพลาด
+            const sheetKey = (row[trackingColIndex] || '').toString().trim();
+
+            // เปรียบเทียบแบบแม่นยำ
+            if (sheetKey === searchKey) {
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
-                // เจอแล้วให้ "ยัดใส่กล่อง results" แทนที่จะส่งกลับเลย
                 results.push({
-                    trackingId: row[trackingColIndex],
+                    trackingId: row[trackingColIndex], // ส่งค่าเดิมในตารางกลับไป
                     imageUrl: row[imageUrlIndex] || '',
                     productName: row[3] || 'ไม่ระบุ', 
                     price: row[4] || '0',       
@@ -72,12 +76,12 @@ module.exports = async (req, res) => {
                     allData: row                     
                 });
                 
-                // *** สำคัญมาก: ห้ามใส่ break; ตรงนี้เด็ดขาด เพื่อให้มันหาต่อจนครบ ***
+                // *** ห้ามใส่ break ตรงนี้เด็ดขาด ***
             }
         }
         
-        // ส่งผลลัพธ์ทั้งหมดกลับไป (ไม่ว่าจะเจอ 1 หรือ 10 รายการ)
         if (results.length > 0) {
+            // เจอข้อมูล (อาจจะ 1 หรือมากกว่า)
             return res.status(200).json({ status: 'success', data: results });
         } else {
             return res.status(404).json({ status: 'not_found', message: `ไม่พบรหัสติดตาม "${trackingId}" ในระบบ.` });
