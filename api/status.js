@@ -3,20 +3,25 @@ const { google } = require('googleapis');
 
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
-// *** เปลี่ยนมาใช้ชีตสรุปใหม่ที่คุณสร้างขึ้นมาเท่านั้น ***
-// คุณสามารถตั้งชื่อชีตนี้ว่า 'Summary' หรือ 'รวมข้อมูล' ก็ได้
-const SUMMARY_SHEET_NAME = 'Summary'; // <-- เปลี่ยนเป็นชื่อชีตสรุปของคุณ
-const DATA_RANGE = 'A:G'; // ดึงข้อมูลทุกคอลัมน์ที่จำเป็น
+// *** แก้ไขช่วงข้อมูลเป็น A:G ***
+const SUMMARY_SHEET_NAME = 'Summary'; // <-- ต้องตรงกับชื่อชีตสรุปที่คุณใส่สูตร
+const DATA_RANGE = 'A:G'; // *** เปลี่ยนจาก A:I เป็น A:G ***
 
 const SHEET_NAME_RANGE = `${SUMMARY_SHEET_NAME}!${DATA_RANGE}`; 
-// โค้ดจะดึงข้อมูลจากชีต Summary เท่านั้น
 
 module.exports = async (req, res) => {
-    // ... (ส่วนการตั้งค่า Header และการรับค่า trackingId เหมือนเดิม) ...
-    // ... (ส่วนการสร้าง GoogleAuth และ sheets object เหมือนเดิม) ...
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') return res.status(200).send();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
     const { trackingId } = req.body;
-    // ... (ส่วนตรวจสอบ trackingId) ...
+
+    if (!trackingId) {
+        return res.status(400).json({ error: 'Tracking ID is required.' });
+    }
 
     try {
         const privateKey = process.env.GOOGLE_PRIVATE_KEY; 
@@ -43,9 +48,10 @@ module.exports = async (req, res) => {
         }
 
         // 2. ค้นหาสถานะในข้อมูลที่ดึงมา
+        // *เราสมมติว่า Col1 (A) = รหัสติดตาม และ Col7 (G) = สถานะ*
         const dataRows = rows.slice(1);
         const trackingColIndex = 0; // Col1 = Index 0
-        const statusColIndex = 6;  // Col7 (G) = Index 6
+        const statusColIndex = 6;  // Col7 (G) = Index 6 
 
         let statusFound = false;
         let result = {};
@@ -56,9 +62,9 @@ module.exports = async (req, res) => {
 
                 result = {
                     trackingId: row[trackingColIndex],
-                    productName: row[3], // Col4
-                    price: row[4],       // Col5
-                    status: status,      // Col7
+                    productName: row[3], // Col4 (D)
+                    price: row[4],       // Col5 (E)
+                    status: status,      // Col7 (G)
                     allData: row         
                 };
 
