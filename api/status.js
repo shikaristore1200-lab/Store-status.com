@@ -1,8 +1,7 @@
 const { GoogleAuth } = require('google-auth-library');
 const { google } = require('googleapis');
 
-// *** ID ของ Google Sheet ของคุณ ***
-// กรุณาเปลี่ยนเป็น ID ของ Google Sheet จริงของคุณ
+// *** ID ของ Google Sheet ของคุณ (กรุณาเปลี่ยนให้ถูกต้อง) ***
 const SPREADSHEET_ID = '1ig9GtFnjF_slfSjySLDT01ZYe3NsGRaVYEjx_70YrSQ'; 
 
 // *** ชีต Summary และช่วงข้อมูล ***
@@ -37,6 +36,7 @@ module.exports = async (req, res) => {
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
         });
 
+        // ตรวจสอบการอนุญาต (Permissions) หากติดปัญหาเรื่อง Role Viewer ให้ตรวจสอบ Service Account Email และ Role ใน GCP
         const sheets = google.sheets({ version: 'v4', auth });
 
         // อ่านข้อมูลจากชีต Summary
@@ -56,33 +56,27 @@ module.exports = async (req, res) => {
         const statusColIndex = 6;   
 
         let results = []; 
-
-        // แปลงสิ่งที่ลูกค้าพิมพ์มา ให้ตัดช่องว่างออก
         const searchKey = trackingId.toString().trim();
 
         for (const row of dataRows) {
-            // ดึงข้อมูลจาก Sheet และตัดช่องว่างออกด้วย (.trim()) เพื่อกันพลาด
             const sheetKey = (row[trackingColIndex] || '').toString().trim();
 
-            // เปรียบเทียบแบบแม่นยำ
             if (sheetKey === searchKey) {
                 const status = row[statusColIndex] || 'ไม่พบสถานะล่าสุด'; 
 
                 results.push({
-                    trackingId: row[trackingColIndex], // ส่งค่าเดิมในตารางกลับไป
+                    trackingId: row[trackingColIndex] || 'N/A',
                     imageUrl: row[imageUrlIndex] || '',
-                    productName: row[3] || 'ไม่ระบุ', 
-                    price: row[4] || '0',       
+                    productName: row[3] || 'ไม่ระบุสินค้า', // เพิ่มค่า default
+                    price: row[4] || '0',                   // เพิ่มค่า default
                     status: status,                  
                     allData: row                     
                 });
-                
-                // *** ไม่มี break เพื่อให้ค้นหาจนครบทุกรายการ ***
+                // ไม่ใช้ break เพื่อดึงทุกรายการ
             }
         }
         
         if (results.length > 0) {
-            // ตอบกลับด้วย Array ของผลลัพธ์ทั้งหมด
             return res.status(200).json({ status: 'success', data: results });
         } else {
             return res.status(404).json({ status: 'not_found', message: `ไม่พบรหัสติดตาม "${trackingId}" ในระบบ.` });
