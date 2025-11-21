@@ -1,160 +1,117 @@
-/* --- General Body & Container Styling --- */
 body {
-    font-family: 'Kanit', sans-serif; /* ใช้ Google Font ที่ import มา */
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* พื้นหลัง gradient สวยๆ */
-    color: #333;
+    font-family: 'Sarabun', sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #c8d3e6 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
     padding: 20px;
-    box-sizing: border-box; /* สำคัญสำหรับการ responsive */
 }
 
 .container {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 15px; /* มุมโค้งมนมากขึ้น */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* เงาที่ดูมีมิติ */
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 500px; /* ขยายความกว้างขึ้นเล็กน้อย */
+    max-width: 450px;
     text-align: center;
-    transform: translateY(0); /* เริ่มต้นที่ตำแหน่งปกติ */
-    transition: transform 0.5s ease-out; /* เพิ่ม animation */
 }
 
-/* --- Header & Subtitle --- */
-h1 {
-    color: #3f51b5; /* สีน้ำเงินเข้ม */
+.header {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e3a8a; /* สีน้ำเงินเข้ม */
     margin-bottom: 10px;
-    font-weight: 600; /* ตัวหนาขึ้น */
-    display: flex; /* จัด icon และ text ให้อยู่บรรทัดเดียวกัน */
-    align-items: center;
-    justify-content: center;
-    gap: 10px; /* ระยะห่างระหว่าง icon กับ text */
 }
 
-.subtitle {
-    color: #666;
-    margin-bottom: 30px;
-    font-weight: 300; /* ตัวบางลง */
+.instruction {
+    color: #6b7280;
+    margin-bottom: 25px;
 }
 
-/* --- Input Group Styling --- */
 .input-group {
-    display: flex; /* จัดเรียง label, input, button ในแนวนอน */
-    align-items: center;
-    margin-bottom: 30px;
-    flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อหน้าจอเล็ก */
-    gap: 10px; /* ระยะห่างระหว่างองค์ประกอบ */
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-.input-group label {
-    flex-basis: 100%; /* ให้ label อยู่บรรทัดของตัวเอง */
-    text-align: left;
-    margin-bottom: 8px;
-    font-weight: 400;
-    color: #555;
-}
-
-#statusId {
-    flex-grow: 1; /* ให้ input ขยายเต็มที่ */
+#trackingId {
+    flex-grow: 1;
     padding: 12px 15px;
-    border: 1px solid #c7d0e4; /* สีขอบที่ดูสะอาดตา */
-    border-radius: 8px; /* มุมโค้งมน */
-    box-sizing: border-box;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
     font-size: 16px;
-    font-family: 'Kanit', sans-serif;
-    outline: none; /* ลบเส้นขอบสีฟ้าเมื่อ focus */
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s;
 }
 
-#statusId:focus {
-    border-color: #3f51b5; /* สีขอบเมื่อ focus */
-    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2); /* เงาเล็กน้อย */
+#trackingId:focus {
+    border-color: #3b82f6;
+    outline: none;
 }
 
-button {
+#checkStatus {
     padding: 12px 20px;
-    background-color: #4CAF50; /* สีเขียว */
+    background-color: #10b981; /* สีเขียว */
     color: white;
     border: none;
-    border-radius: 8px; /* มุมโค้งมน */
-    cursor: pointer;
+    border-radius: 8px;
     font-size: 16px;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 500;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    display: flex; /* จัด icon และ text ให้อยู่บรรทัดเดียวกัน */
-    align-items: center;
-    justify-content: center;
-    gap: 8px; /* ระยะห่างระหว่าง icon กับ text */
-    flex-shrink: 0; /* ไม่ให้ปุ่มหดตัว */
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
-button:hover {
-    background-color: #45a049; /* สีเขียวเข้มขึ้นเมื่อ hover */
-    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
+#checkStatus:hover {
+    background-color: #059669;
 }
 
-button:active {
-    transform: translateY(0);
+#checkStatus:active {
+    transform: scale(0.98);
 }
 
-/* --- Result Display Styling --- */
-#result {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px; /* มุมโค้งมน */
-    background-color: #f9f9f9;
-    min-height: 80px;
+/* Result Box */
+.result-box {
     text-align: left;
-    transition: all 0.3s ease-in-out;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 100px; /* เพื่อให้มีพื้นที่แสดงผล */
+    word-wrap: break-word; /* ป้องกันข้อความยาวเกิน */
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
 }
 
-#result h3 {
-    color: #3f51b5;
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    font-weight: 600;
+.result-box.hidden {
+    display: none;
 }
 
-#result p {
-    margin-bottom: 8px;
-    line-height: 1.6;
+.status-item {
+    padding: 8px 0;
+    border-bottom: 1px dashed #e5e7eb;
 }
 
-#result p strong {
-    color: #555;
+.status-item:last-child {
+    border-bottom: none;
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 600px) {
-    .container {
-        padding: 25px;
-        margin: 10px;
-        max-width: 95%; /* ใช้พื้นที่มากขึ้นบนมือถือ */
-    }
+.status-label {
+    font-weight: 700;
+    color: #1f2937;
+    display: inline-block;
+    width: 120px; /* จัดให้ label ตรงกัน */
+}
 
-    .input-group {
-        flex-direction: column; /* จัดเรียงเป็นแนวตั้งบนมือถือ */
-        align-items: stretch;
-    }
+.status-value {
+    color: #4b5563;
+}
 
-    .input-group label {
-        text-align: center; /* จัด label กลางบนมือถือ */
-    }
+.status-value.success {
+    color: #10b981;
+    font-weight: 700;
+}
 
-    #statusId, button {
-        width: 100%; /* ให้ input และ button เต็มความกว้าง */
-        border-radius: 8px; /* ปรับมุมโค้งมนใหม่เมื่อแยกกัน */
-    }
-
-    button {
-        margin-top: 10px; /* ระยะห่างระหว่าง input กับ button */
-    }
+.status-value.error {
+    color: #ef4444;
+    font-weight: 700;
 }
