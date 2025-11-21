@@ -1,0 +1,13 @@
+{
+  "name": "google-sheet-status-checker",
+  "version": "1.0.0",
+  "description": "A simple status checker using Google Sheets and Vercel",
+  "main": "api/status.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.5.1",
+    "googleapis": "^129.0.0"
+  }
+}
